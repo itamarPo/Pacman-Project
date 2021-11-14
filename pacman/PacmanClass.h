@@ -33,8 +33,8 @@ public:
 	void printPacman();
 	int getPacmanRow();
 	int getPacmanCol();
-	int getPacmanScore()const;
-	int getPacmanLives()const;
+	int getPacmanScore() const;
+	int getPacmanLives() const;
 	void ResetPos();
 	char getPacmanDirection()const;
 	bool CheckIfPacmanHitWall(GameBoard board[][SizeCol]);

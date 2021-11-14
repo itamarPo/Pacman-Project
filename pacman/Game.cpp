@@ -1,6 +1,7 @@
 #include "Game.h"
 //GameBoard board[SizeRow][SizeCol];
 
+
 Game::Game()
 {
 	_numBread = 0;
@@ -35,8 +36,8 @@ void Game::checkImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]
 	int i;
 	for (i = 0; i < 2; i++)
 	{
-		if (pacman.getPacmanRow() == ghosts[i].getGhostX())
-			if (pacman.getPacmanCol() == ghosts[i].getGhostY())
+		if (pacman.getPacmanRow() == ghosts[i].getGhostRow())
+			if (pacman.getPacmanCol() == ghosts[i].getGhostCol())
 			{
 				pacman.setPacmanLives();
 				PrintLifeLost(pacman);
@@ -93,7 +94,6 @@ char Game::DecideChar(const int& row, const int& col)
 void Game::GameCycle()
 {
 	Ghost ghosts[2]; 
-	int i;
 	GhostInitialize(ghosts);
 	Pacman pac;
 	GameBoard board[SizeRow][SizeCol]; 
@@ -146,9 +146,10 @@ void Game::Menu()
 {
 	char user_input;
 	PrintMenu();
-	cin >> user_input;
-	while (true)
+
+	do
 	{
+		user_input = _getch();
 		switch (user_input)
 		{
 		case '1': GameCycle();
@@ -159,15 +160,14 @@ void Game::Menu()
 		case '9': clrscr();
 			cout << "Good Bye" << endl;
 			return;
-		default: clrscr();	
+		default: clrscr();
 			cout << "Incorrect input";
 			Sleep(1400);
 			break;
 		}
 		clrscr();
-		PrintMenu();
-		cin >> user_input;
-	}
+		PrintMenu();	
+	} while (true);
 
 }
 
@@ -185,9 +185,9 @@ void Game::Instructions(char& user_input)
 	cout << "Welcome To Pacman" << endl;
 	cout << "Youre the pacman (@ in the game), your goal is to eat all the breadcumbs on the board" << endl;
 	cout << "while avoiding the ghosts ($ in the game)." << endl;
-	cout << "as pacman you start with 3 lives." << endl;
-	cout << "if you get in contact with a ghost you will lose a life. if you lose 3 lives you also lose the game." << endl;
-	cout << "when you lose a life the game will restart and you will be back to your intial position." << endl;
+	cout << "As pacman you start with 3 lives." << endl;
+	cout << "If you get in contact with a ghost you will lose a life. if you lose 3 lives you also lose the game." << endl;
+	cout << "When you lose a life the game will restart and you will be back to your intial position." << endl;
 	cout << "But your score will be saved as will your breadcrumbs eating progress." << endl;
 	cout << endl;
 	cout << "Keys:" << endl;
@@ -247,7 +247,6 @@ void Game::GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 		CheckIfPacmanAteFood(pacman, board);
 		pacman.printPacman();
 		//ConsequencesOfMove(pacman, ghosts, board, direction);
-		// need to add here a function which prints food after ghosts move over it. itamar's note: solved- ghost.UpdateMove
 		PrintScoreAndLives(pacman);
 		Sleep(1000);
 	}

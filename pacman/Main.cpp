@@ -4,7 +4,7 @@
 int main()
 {
 	Game game;
-	game.GameCycle();
+	game.Menu();
 	return 0;
 }
 

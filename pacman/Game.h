@@ -31,6 +31,5 @@ public:
 	void CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol]);
 	void PrintScoreAndLives(Pacman& pacman)const;
 	void GhostInitialize(Ghost* ghosts);
-	void PrintLifeLost(Pacman& pacman);
-	//function that check whether or not both pacman an ghosts is going to hit a wall. if so, 
+	void PrintLifeLost(Pacman& pacman); 
 };
