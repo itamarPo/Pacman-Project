@@ -108,12 +108,12 @@ void Ghost::Movement(GameBoard board[][SizeCol])
 	}
 }
 
-int Ghost::getGhostX()
+int Ghost::getGhostRow()
 {
 	return _pos.getRow();
 }
 
-int Ghost::getGhostY()
+int Ghost::getGhostCol()
 {
 	return _pos.getCol();
 }

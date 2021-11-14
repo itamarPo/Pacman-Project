@@ -17,8 +17,8 @@ public:
 
 	void SetPosition(const int x, const int y);
 
-	int getGhostX();
-	int getGhostY();
+	int getGhostRow();
+	int getGhostCol();
 	GhostDirection GetDirection();
 
 	void Print();
