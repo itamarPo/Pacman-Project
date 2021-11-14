@@ -4,7 +4,7 @@
 #include "PacmanClass.h"
 class Ghost;
 class Pacman;
-
+/*note*/
 
 class Game
 {
