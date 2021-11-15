@@ -146,7 +146,7 @@ void Game::Menu()
 {
 	char user_input;
 	PrintMenu();
-
+	Color = false;
 	do
 	{
 		user_input = _getch();
@@ -154,7 +154,9 @@ void Game::Menu()
 		{
 		case '1': GameCycle();
 			break;
-		case '8': clrscr();
+		case '7': turnColor();
+			break;
+		case '8': 
 			Instructions(user_input);
 			break;
 		case '9': clrscr();
@@ -165,7 +167,6 @@ void Game::Menu()
 			Sleep(1400);
 			break;
 		}
-		clrscr();
 		PrintMenu();	
 	} while (true);
 
@@ -173,6 +174,7 @@ void Game::Menu()
 
 void Game::PrintMenu() const
 {
+	clrscr();
 	cout << "Welcome To Pacman" << endl;
 	cout << "(1) Start a new game" << endl;
 	cout << "(7) Turn on/off colors" << endl;
@@ -180,8 +182,10 @@ void Game::PrintMenu() const
 	cout << "(9) EXIT" << endl;
 }
 
+
 void Game::Instructions(char& user_input)
 {
+	clrscr();
 	cout << "Welcome To Pacman" << endl;
 	cout << "Youre the pacman (@ in the game), your goal is to eat all the breadcumbs on the board" << endl;
 	cout << "while avoiding the ghosts ($ in the game)." << endl;
@@ -300,7 +304,10 @@ void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][S
 	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol();
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
 	PacmanCheck(pacman, board);
+	ghosts[0].Print();
+	ghosts[1].Print();
 	checkImpact(pacman, ghosts, board);
+	
 }
 
 void Game::PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol])
@@ -390,3 +397,15 @@ void Game::CheckIfPacmanReachedTunnel(Pacman& pacman, GameBoard[][SizeCol])
 	return;
 }
 
+void Game::turnColor()
+{
+	clrscr();
+	gotoxy(0, 0);
+	if (!Color)
+		cout << "Colors are turned On";
+	else
+		cout << "Colors are turend off";
+	Color = !Color;
+	Sleep(GameSpeed * 2);
+	clrscr();
+}

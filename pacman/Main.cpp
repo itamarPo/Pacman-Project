@@ -1,5 +1,5 @@
 #include "Game.h"
-
+bool Color = false;
 
 int main()
 {

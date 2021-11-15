@@ -13,7 +13,7 @@ const int StartRow = 12;
 const int StartCol = 30;
 const int StartScore = 0;
 const int StartLives = 3;
-
+extern bool Color;
 //pacman starts in 30,10
 //update ctor to const values, add const to start pacman location
 class Pacman
@@ -23,6 +23,7 @@ private:
 	int _score;
 	int _remaininglives;
 	char _direction;
+
 public:
 	Pacman(const int row = StartRow, const int col = StartCol, const int score = StartScore, const int Lives = StartLives, const char direction = STAY);
 	~Pacman();

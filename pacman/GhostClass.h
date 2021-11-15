@@ -3,10 +3,12 @@
 #include "Position.h"
 #include "GotoXY.h"
 #include "Game.h"
+#include "ColoClass.h"
 using namespace std;
 const int StartGhostRow = 7;
 const int StartGhostCol = 54;
 enum GhostDirection{Up_G, Down_G, Left_G, Right_G};
+extern bool Color;
 class Ghost
 {
 public:

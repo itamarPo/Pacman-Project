@@ -2,9 +2,12 @@
 #include "GameBoard.h"
 #include "GhostClass.h"
 #include "PacmanClass.h"
-const int GameSpeed = 500;
 class Ghost;
 class Pacman;
+//class Color;
+const int GameSpeed = 100;
+extern bool Color;
+
 /*note*/
 
 class Game
@@ -34,4 +37,5 @@ public:
 	void GhostInitialize(Ghost* ghosts);
 	void PrintLifeLost(Pacman& pacman); 
 	void CheckIfPacmanReachedTunnel(Pacman& pacman, GameBoard[][SizeCol]);
+	void turnColor();
 };

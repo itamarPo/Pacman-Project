@@ -26,7 +26,12 @@ void Ghost::SetPosition(const int x, const int y)
 void Ghost::Print()
 {
 	gotoxy(_pos.getRow(), _pos.getCol());
-	cout << "$";
+	if (Color)
+	{
+		cout << CYAN << "$" << RESET;
+	}
+	else
+		cout << "$";
 
 }
 
@@ -41,7 +46,6 @@ void Ghost::UpdateMove(GameBoard board[][SizeCol])
 	}
 	
 	Movement(board);
-	Print();
 	move_counter++;
 }
 

@@ -18,7 +18,15 @@ void GameBoard::setGamePiece(const char ch)
 void GameBoard::printPiece(const int& x, const int& y) const
 {
 			gotoxy(x, y);
-			cout << getSignpiece();
+			if (Color)
+			{
+				if (_sign == '#')
+					cout << GRAY << _sign << RESET;
+				else
+					cout << FOODCOLOR<< _sign << RESET;
+			}
+			else
+				cout << _sign;
 }
 
 

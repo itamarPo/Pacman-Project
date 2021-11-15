@@ -62,7 +62,12 @@ void Pacman::setPacmanIfTunnel(const int row, const int col)
 void Pacman::printPacman()
 {
 	gotoxy(_pos.getRow(),_pos.getCol());
-	cout << "@";
+	if (Color)
+	{
+		cout << YELLOW << "@" << RESET;
+	}
+	else
+		cout << "@";
 }
 
 int Pacman::getPacmanRow() 
