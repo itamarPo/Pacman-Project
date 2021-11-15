@@ -2,6 +2,7 @@
 #include "GameBoard.h"
 #include "GhostClass.h"
 #include "PacmanClass.h"
+const int GameSpeed = 500;
 class Ghost;
 class Pacman;
 /*note*/
@@ -26,10 +27,11 @@ public:
 	void GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]);
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
-	void ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], char &direction);
-	void PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol], char& direction);
+	void ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]);
+	void PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol]);
 	void CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol]);
 	void PrintScoreAndLives(Pacman& pacman)const;
 	void GhostInitialize(Ghost* ghosts);
 	void PrintLifeLost(Pacman& pacman); 
+	void CheckIfPacmanReachedTunnel(Pacman& pacman, GameBoard[][SizeCol]);
 };

@@ -53,6 +53,12 @@ void Pacman::setPacmanDirection(const char direction)
 	_direction = direction;
 }
 
+void Pacman::setPacmanIfTunnel(const int row, const int col)
+{
+	_pos.SetRow(row);
+	_pos.SetCol(col);
+}
+
 void Pacman::printPacman()
 {
 	gotoxy(_pos.getRow(),_pos.getCol());

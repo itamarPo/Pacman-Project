@@ -209,7 +209,7 @@ void Game::GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 {
 	char tmp_move = 0;
 	bool IsGhostTurn = false;
-	while (pacman.getPacmanLives() != 0 || _numBread != 0)//or pacman earned max points
+	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
 	{
 		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
 		{
@@ -230,27 +230,26 @@ void Game::GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 		
 		if (IsGhostTurn == true)// makes sure that ghosts move once in two pacman moves.
 		{
-			//to do: randomly pick a direction for ghosts
 			ghosts[0].UpdateMove(board); // updates the ghost's movements (if needed it changed direction)
 			ghosts[1].UpdateMove(board);
-			//move ghosts
 			IsGhostTurn = false;
 		}
 		else
-			IsGhostTurn = true; 
-		if (pacman.CheckIfPacmanHitWall(board))
-			pacman.setPacmanDirection(STAY);
-		pacman.setPacmanPosition();
-		//enter pacman's direction change and prev char.
-		board[pacman.getPacmanRow()][pacman.getPacmanCol()].printPiece(pacman.getPacmanRow(), pacman.getPacmanCol());
-		//pacman.setPacmanPosition(direction);
-		CheckIfPacmanAteFood(pacman, board);
-		pacman.printPacman();
-		//ConsequencesOfMove(pacman, ghosts, board, direction);
+			IsGhostTurn = true;
+		ConsequencesOfMove(pacman, ghosts, board);
 		PrintScoreAndLives(pacman);
-		Sleep(1000);
+		Sleep(GameSpeed);
 	}
-	//after game is over (win or lose)
+	clrscr();
+	gotoxy(10, 20);
+	if (pacman.getPacmanLives() == 0)
+	{
+		cout << "Game Over!";
+	}
+	else
+		cout << "Congratulations, you won!!";
+	Sleep(GameSpeed * 3);
+	clrscr();
 }
 
 bool Game::IsGamePaused(char& pause)
@@ -269,7 +268,7 @@ bool Game::IsGamePaused(char& pause)
 				if (tmp == PAUSE)
 					pause = 0;
 			}
-			Sleep(1000);
+			Sleep(GameSpeed*2);
 		}
 		return true;
 	}
@@ -296,27 +295,24 @@ bool Game::IsMoveValid(const char& ch)
 }
 
 /*this function checks if pacman ate, hit a ghost, or got into a tunnel*/
-void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], char &direction)
+void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 {
-	/* 1. print the game board's pacman location before move.
-	* 2. move pacman
-	* 3. checks
-	* 4. prints
-	*/
-	board[pacman.getPacmanRow()][pacman.getPacmanCol()].printPiece(pacman.getPacmanRow(), pacman.getPacmanCol());
-	PacmanCheck(pacman, board, direction);
-	//Ghostcheck (walls)
+	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol();
+	board[pacRow][pacCol].printPiece(pacRow, pacCol);
+	PacmanCheck(pacman, board);
 	checkImpact(pacman, ghosts, board);
-	
 }
 
-void Game::PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol], char& direction)
+void Game::PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol])
 {
-	//check if there's a wall.
+	if (pacman.CheckIfPacmanHitWall(board) == true)
+	{
+		pacman.setPacmanDirection(STAY);
+	}
 	pacman.setPacmanPosition();
 	CheckIfPacmanAteFood(pacman, board);
-	//checkTunnel()
-
+	CheckIfPacmanReachedTunnel(pacman, board);
+	pacman.printPacman();
 }
 
 void Game::CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol])
@@ -350,10 +346,47 @@ void Game::GhostInitialize(Ghost* ghosts)
 void Game::PrintLifeLost(Pacman& pacman)
 {
 	clrscr();
-	gotoxy(20, 20);
-	cout << "The Pacman was eaten by a ghost." << endl;
-	cout << "You have " << pacman.getPacmanLives() << "Lives reamining";
-	Sleep(1000);
+	
+	if (pacman.getPacmanLives() > 0)
+	{
+		gotoxy(10, 30);
+		cout << "The Pacman was eaten by a ghost." << endl;
+		gotoxy(11, 30);
+		cout << "You have " << pacman.getPacmanLives() << " lives reamining";
+		Sleep(GameSpeed * 3);
+	}
 	clrscr();
+}
+
+void Game::CheckIfPacmanReachedTunnel(Pacman& pacman, GameBoard[][SizeCol])
+{
+	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol();
+	if (pacRow == 10)
+	{
+		if (pacCol == 0)
+		{
+			pacman.setPacmanIfTunnel(pacRow, 58);
+			return;
+		}
+		if (pacCol == 59)
+		{
+			pacman.setPacmanIfTunnel(pacRow, 1);
+			return;
+		}
+	}
+	if (pacCol == 30)
+	{
+		if (pacRow == 0)
+		{
+			pacman.setPacmanIfTunnel(18, pacCol);
+			return;
+		}
+		if (pacRow == 19)
+		{
+			pacman.setPacmanIfTunnel(1, pacCol);
+			return;
+		}
+	}
+	return;
 }
 

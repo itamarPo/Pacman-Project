@@ -30,6 +30,7 @@ public:
 	void setPacmanScore(int bonus = 1);
 	void setPacmanLives(int minus = 1);
 	void setPacmanDirection(const char direction);
+	void setPacmanIfTunnel(const int row, const int col);
 	void printPacman();
 	int getPacmanRow();
 	int getPacmanCol();

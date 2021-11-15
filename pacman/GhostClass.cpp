@@ -54,22 +54,22 @@ GhostDirection Ghost::SetMove(GameBoard board[][SizeCol])
 		random_move = rand() % 4;
 		switch (random_move)
 		{
-		case Up_G: if (!GhostObstacle(row - 1, col, board, Up_G))
+		case Up_G: if (!GhostObstacle(row, col, board, Up_G))
 		{
 			return Up_G;
 		}
 				 break;
-		case Down_G: if (!GhostObstacle(row + 1, col, board, Down_G))
+		case Down_G: if (!GhostObstacle(row, col, board, Down_G))
 		{
 			return Down_G;
 		}
 				 break;
-		case Left_G: if (!GhostObstacle(row, col - 1, board, Left_G))
+		case Left_G: if (!GhostObstacle(row, col, board, Left_G))
 		{
 			return Left_G;
 		}
 				 break;
-		case Right_G: if (!GhostObstacle(row, col + 1, board, Right_G))
+		case Right_G: if (!GhostObstacle(row, col, board, Right_G))
 		{
 			return Right_G;
 		}
