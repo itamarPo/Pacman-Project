@@ -27,9 +27,6 @@
     <ClCompile Include="GotoXY.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Kbhit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,9 +48,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="GotoXY.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Kbhit.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PacmanClass.h">

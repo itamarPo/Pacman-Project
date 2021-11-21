@@ -40,7 +40,6 @@ void Ghost::UpdateMove(GameBoard board[][SizeCol])
 {
 	if (move_counter == 20 || GhostObstacle(_pos.getRow(), _pos.getCol(), board, direction))
 	{
-		//change ghost's direction
 		direction = SetMove(board);
 		move_counter = 0;
 	}
@@ -86,8 +85,6 @@ GhostDirection Ghost::SetMove(GameBoard board[][SizeCol])
 	
 }
 
-//aim ha zad hu zugi, lo lehaziz at ghost aheret ken lehaziz.
-
 /*update the ghost position and prints the position of the older board piece it has overwritten*/
 void Ghost::Movement(GameBoard board[][SizeCol])
 {
@@ -131,16 +128,16 @@ bool Ghost::GhostObstacle(const int& row, const int& col, GameBoard board[][Size
 {
 	switch (direction)
 	{
-	case Up_G: if (Game::checkWall(row - 1, col, board) || Game::checkTunnel(row - 1, col, board))
+	case Up_G: if (Game::CheckWall(row - 1, col, board) || Game::CheckTunnel(row - 1, col, board))
 		return true;
 		break;
-	case Down_G: if (Game::checkWall(row + 1, col, board) || Game::checkTunnel(row+1, col, board))
+	case Down_G: if (Game::CheckWall(row + 1, col, board) || Game::CheckTunnel(row+1, col, board))
 		return true;
 		break;
-	case Left_G: if (Game::checkWall(row, col - 1, board) || Game::checkTunnel(row, col - 1, board))
+	case Left_G: if (Game::CheckWall(row, col - 1, board) || Game::CheckTunnel(row, col - 1, board))
 		return true;
 		break;
-	case Right_G: if (Game::checkWall(row, col + 1, board) || Game::checkTunnel(row, col + 1, board))
+	case Right_G: if (Game::CheckWall(row, col + 1, board) || Game::CheckTunnel(row, col + 1, board))
 		return true;
 		break;
 	}	

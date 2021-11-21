@@ -4,18 +4,22 @@
 #include "Position.h"
 #include "Game.h"
 const char UP = 'w';
-const char DOWN = 'x';
+const char UPW = 'W';
+const char DOWN= 'x';
+const char DOWNX = 'X';
 const char RIGHT = 'd';
+const char RIGHTD = 'D';
 const char LEFT = 'a';
+const char LEFTA = 'A';
 const char PAUSE = 27;
 const char STAY = 's';
-const int StartRow = 12;
+const char STAYS = 'S';
+const int StartRow = 10;
 const int StartCol = 30;
 const int StartScore = 0;
 const int StartLives = 3;
 extern bool Color;
-//pacman starts in 30,10
-//update ctor to const values, add const to start pacman location
+
 class Pacman
 {
 private:

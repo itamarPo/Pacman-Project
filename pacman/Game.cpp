@@ -1,5 +1,4 @@
 #include "Game.h"
-//GameBoard board[SizeRow][SizeCol];
 
 
 Game::Game()
@@ -11,27 +10,27 @@ Game::~Game()
 {
 }
 
-bool Game::checkWall(const int& x,const int& y, GameBoard board[][SizeCol])
+bool Game::CheckWall(const int& x,const int& y, GameBoard board[][SizeCol])
 {
-	if (board[x][y].getSignpiece() == '#')
+	if (board[x][y].getSignpiece() == WALL)
 		return true;
 	return false;
 }
 
-bool Game::checkTunnel(const int& row, const int& col, GameBoard board[][SizeCol])
+bool Game::CheckTunnel(const int& row, const int& col, GameBoard board[][SizeCol])
 {
-	if (row == 30)
+	if (col == 29)
 	{
-		if (col == 0 || col == 19)
+		if (row == 0 || row == 19)
 			return true;
 	}
-	else if (col == 10)
-		if (row == 0 || row == 59)
+	else if (row == 10)
+		if (col == 0 || col == 59)
 			return true;
 	return false;
 }
 
-void Game::checkImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
+void Game::CheckImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 {
 	int i;
 	for (i = 0; i < 2; i++)
@@ -43,6 +42,8 @@ void Game::checkImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]
 				PrintLifeLost(pacman);
 				GhostInitialize(ghosts);
 				pacman.ResetPos();
+				if (pacman.getPacmanLives() == 0)
+					return;
 				PrintBoard(board, pacman, ghosts);
 				return;
 			}
@@ -50,46 +51,6 @@ void Game::checkImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]
 	return;
 }
 
-char Game::DecideChar(const int& row, const int& col)
-{
-	if (col == 0 || col == 59)
-	{
-		if (row == 10)
-			return ' ';
-		else
-			return '#';
-	}
-	else if (row == 0 || row == 19)
-	{
-		if (col == 30)
-			return ' ';
-		else
-			return '#';
-	}
-	else if (row == 12 || row == 13)
-	{
-		if (5 <= col && col <= 13)
-			return '#';
-		else
-			return char(248);
-	}
-	else if (col == 15)
-	{
-		if (10 <= row && row < 16)
-			return '#';
-		else
-			return char(248);
-	}
-	else if (col == 3)
-	{
-		if (10 <= row && row <= 15)
-			return '#';
-		else
-			return char(248);
-	}
-	else
-		return char(248);
-}
 
 void Game::GameCycle()
 {
@@ -102,31 +63,40 @@ void Game::GameCycle()
 	GameRun(pac, ghosts, board);
 
 
-	//GameBoard board[SizeRow][SizeCol];
-	// first ghosts movements are needed to be randomized outside of the ghost class. meaning: in this function
 	
- //ahrey she buza zaad zarih lahzor la mishbezet ha kodemet ladpis ota. nase at ze bezrat ha kelet mi ha mishtamesh, o kelet shel ha ruah.
 }
 
 void Game::InitBoard(GameBoard board[][SizeCol])
 {
+	ifstream File;
+	File.open("pacmanboard.txt");
+	if (!File)
+	{
+		cout << "Error opening file!";
+		exit(1);
+	}
 	int row, col;
 	char sign;
 	for (row = 0; row < SizeRow; row++)
-		for (col = 0; col < SizeCol; col++)
+		for (col = 0; col <= SizeCol; col++)
 		{
-			
-			if (!(row == 12 && col == 30))
+			sign = File.get();
+			if (sign != '\n')
 			{
-				sign = DecideChar(row, col);
-				if (sign == FOOD)
-					_numBread++;
+				if (!(row == StartRow && col == StartCol))
+				{
+					if (sign == '*')
+					{
+						_numBread++;
+						sign = FOOD;
+					}
+				}
+				else
+					sign = ' ';
 				board[row][col].setGamePiece(sign);
 			}
-			else
-				board[row][col].setGamePiece(' ');
-			
 		}
+	File.close();
 }
 
 void Game::PrintBoard(GameBoard board[][SizeCol], Pacman& pacman, Ghost* ghosts) const
@@ -200,7 +170,7 @@ void Game::Instructions(char& user_input)
 	cout << "Move Up: W" << endl;
 	cout << "Move Down: X" << endl;
 	cout << "Stay: S" << endl;
-	cout << "Menu: ESC" << endl;
+	cout << "Pause: ESC" << endl;
 	cout << endl;
 	cout << "To return to the menu press ESC.";
 	do
@@ -211,8 +181,9 @@ void Game::Instructions(char& user_input)
 
 void Game::GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 {
+	char flush;
 	char tmp_move = 0;
-	bool IsGhostTurn = false;
+	bool is_ghost_turn = false;
 	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
 	{
 		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
@@ -232,27 +203,22 @@ void Game::GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 			}
 		}
 		
-		if (IsGhostTurn == true)// makes sure that ghosts move once in two pacman moves.
-		{
-			ghosts[0].UpdateMove(board); // updates the ghost's movements (if needed it changed direction)
-			ghosts[1].UpdateMove(board);
-			IsGhostTurn = false;
-		}
-		else
-			IsGhostTurn = true;
-		ConsequencesOfMove(pacman, ghosts, board);
-		PrintScoreAndLives(pacman);
+		ConsequencesOfMove(pacman, ghosts, board, is_ghost_turn);
+		if (pacman.getPacmanLives() != 0)
+			PrintScoreAndLives(pacman);
 		Sleep(GameSpeed);
 	}
 	clrscr();
 	gotoxy(10, 20);
 	if (pacman.getPacmanLives() == 0)
-	{
 		cout << "Game Over!";
-	}
 	else
 		cout << "Congratulations, you won!!";
-	Sleep(GameSpeed * 3);
+	Sleep(GameOverWon);
+	clrscr();
+	cout << "Press any key to return to the menu";
+	while (!_kbhit());
+	flush = _getch();
 	clrscr();
 }
 
@@ -281,15 +247,15 @@ bool Game::IsGamePaused(char& pause)
 
 bool Game::IsMoveValid(const char& ch)
 {
-	if (ch == STAY || ch == (STAY - 32))
+	if (ch == STAY || ch == (STAYS))
 		return true;
-	else if (ch == LEFT || ch == (LEFT - 32))
+	else if (ch == LEFT || ch == (LEFTA))
 		return true;
-	else if (ch == RIGHT || ch == (RIGHT - 32))
+	else if (ch == RIGHT || ch == (RIGHTD))
 		return true;
-	else if (ch == UP || ch == (UP - 32))
+	else if (ch == UP || ch == (UPW))
 		return true;
-	else if (ch == DOWN || ch == (DOWN - 32))
+	else if (ch == DOWN || ch == (DOWNX))
 		return true;
 	else if (ch == PAUSE)
 		return true;
@@ -299,14 +265,25 @@ bool Game::IsMoveValid(const char& ch)
 }
 
 /*this function checks if pacman ate, hit a ghost, or got into a tunnel*/
-void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
+void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], bool& is_ghost_turn)
 {
 	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol();
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
 	PacmanCheck(pacman, board);
+	CheckImpact(pacman, ghosts, board);
+	if (pacman.getPacmanLives() == 0)
+		return;
+	if (is_ghost_turn == true)// makes sure that ghosts move once in two pacman moves.
+	{
+		ghosts[0].UpdateMove(board); // updates the ghost's movements (if needed it changed direction)
+		ghosts[1].UpdateMove(board);
+		is_ghost_turn = false;
+	}
+	else
+		is_ghost_turn = true;
 	ghosts[0].Print();
 	ghosts[1].Print();
-	checkImpact(pacman, ghosts, board);
+	CheckImpact(pacman, ghosts, board);
 	
 }
 
@@ -317,9 +294,10 @@ void Game::PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol])
 		pacman.setPacmanDirection(STAY);
 	}
 	pacman.setPacmanPosition();
-	CheckIfPacmanAteFood(pacman, board);
-	CheckIfPacmanReachedTunnel(pacman, board);
+	//CheckIfPacmanAteFood(pacman, board);
+	CheckTunnel(pacman, board);
 	pacman.printPacman();
+	CheckIfPacmanAteFood(pacman, board);
 }
 
 void Game::CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol])
@@ -360,12 +338,12 @@ void Game::PrintLifeLost(Pacman& pacman)
 		cout << "The Pacman was eaten by a ghost." << endl;
 		gotoxy(11, 30);
 		cout << "You have " << pacman.getPacmanLives() << " lives reamining";
-		Sleep(GameSpeed * 3);
+		Sleep(GameSpeed * 8);
 	}
 	clrscr();
 }
 
-void Game::CheckIfPacmanReachedTunnel(Pacman& pacman, GameBoard[][SizeCol])
+void Game::CheckTunnel(Pacman& pacman, GameBoard[][SizeCol])
 {
 	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol();
 	if (pacRow == 10)
@@ -381,7 +359,7 @@ void Game::CheckIfPacmanReachedTunnel(Pacman& pacman, GameBoard[][SizeCol])
 			return;
 		}
 	}
-	if (pacCol == 30)
+	if (pacCol == 29)
 	{
 		if (pacRow == 0)
 		{
@@ -404,7 +382,7 @@ void Game::turnColor()
 	if (!Color)
 		cout << "Colors are turned On";
 	else
-		cout << "Colors are turend off";
+		cout << "Colors are turend Off";
 	Color = !Color;
 	Sleep(GameSpeed * 2);
 	clrscr();

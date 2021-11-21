@@ -20,7 +20,7 @@ void GameBoard::printPiece(const int& x, const int& y) const
 			gotoxy(x, y);
 			if (Color)
 			{
-				if (_sign == '#')
+				if (_sign == WALL)
 					cout << GRAY << _sign << RESET;
 				else
 					cout << FOODCOLOR<< _sign << RESET;
