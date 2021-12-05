@@ -15,10 +15,10 @@ Ghost::~Ghost()
 }
 
 
-void Ghost::SetPosition(const int x, const int y)
+void Ghost::SetPosition(const int row, const int col)
 {
-	_pos.SetRow(x);
-	_pos.SetCol(y);
+	_pos.SetRow(row);
+	_pos.SetCol(col);
 }
 
 
@@ -38,7 +38,7 @@ void Ghost::Print()
 
 void Ghost::UpdateMove(GameBoard board[][SizeCol])
 {
-	if (move_counter == 20 || GhostObstacle(_pos.getRow(), _pos.getCol(), board, direction))
+	if (move_counter == 20 || Obstacle(_pos.getRow(), _pos.getCol(), board, direction))
 	{
 		direction = SetMove(board);
 		move_counter = 0;
@@ -57,22 +57,22 @@ GhostDirection Ghost::SetMove(GameBoard board[][SizeCol])
 		random_move = rand() % 4;
 		switch (random_move)
 		{
-		case Up_G: if (!GhostObstacle(row, col, board, Up_G))
+		case Up_G: if (!Obstacle(row, col, board, Up_G))
 		{
 			return Up_G;
 		}
 				 break;
-		case Down_G: if (!GhostObstacle(row, col, board, Down_G))
+		case Down_G: if (!Obstacle(row, col, board, Down_G))
 		{
 			return Down_G;
 		}
 				 break;
-		case Left_G: if (!GhostObstacle(row, col, board, Left_G))
+		case Left_G: if (!Obstacle(row, col, board, Left_G))
 		{
 			return Left_G;
 		}
 				 break;
-		case Right_G: if (!GhostObstacle(row, col, board, Right_G))
+		case Right_G: if (!Obstacle(row, col, board, Right_G))
 		{
 			return Right_G;
 		}
@@ -124,7 +124,7 @@ GhostDirection Ghost::GetDirection()
 	return direction;
 }
 
-bool Ghost::GhostObstacle(const int& row, const int& col, GameBoard board[][SizeCol], GhostDirection direction) const
+bool Ghost::Obstacle(const int& row, const int& col, GameBoard board[][SizeCol], GhostDirection direction) const
 {
 	switch (direction)
 	{

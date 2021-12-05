@@ -36,25 +36,37 @@
     <ClCompile Include="Position.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fruit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fruit.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameBoard.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GhostClass.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GotoXY.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GhostClass.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PacmanClass.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Position.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

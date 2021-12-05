@@ -387,3 +387,18 @@ void Game::turnColor()
 	Sleep(GameSpeed * 2);
 	clrscr();
 }
+
+void Game::checkImpact(Ghost* ghosts, Fruit& fruit, GameBoard[][SizeCol])
+{
+	int i;
+	for (i = 0; i < 2; i++)
+	{
+		if (fruit.getRow() == ghosts[i].getGhostRow())
+			if (fruit.getCol() == ghosts[i].getGhostCol())
+			{
+				fruit.setAppear();
+				return;
+			}
+	}
+	return;
+}
