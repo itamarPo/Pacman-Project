@@ -3,6 +3,7 @@
 #include "GotoXY.h"
 #include "Position.h"
 #include "Game.h"
+const char Pacman_sign = '@';
 const char UP = 'w';
 const char UPW = 'W';
 const char DOWN= 'x';
@@ -24,6 +25,7 @@ class Pacman
 {
 private:
 	Position _pos;
+	Position _startPos;
 	int _score;
 	int _remaininglives;
 	char _direction;
@@ -32,6 +34,7 @@ public:
 	Pacman(const int row = StartRow, const int col = StartCol, const int score = StartScore, const int Lives = StartLives, const char direction = STAY);
 	~Pacman();
 	void setPacmanPosition();
+	void setPacmanStartPosition(const int& row, const int& col);
 	void setPacmanScore(int bonus = 1);
 	void setPacmanLives(int minus = 1);
 	void setPacmanDirection(const char direction);

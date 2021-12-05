@@ -2,25 +2,40 @@
 #include "GameBoard.h"
 #include "GhostClass.h"
 #include "PacmanClass.h"
+#include "GameObject.h"
+#include "Fruit.h"
+#include <filesystem>
+#include <string>
+#include <vector>
 #include <fstream>
 class Ghost;
 class Pacman;
 const int GameSpeed = 200;
 const int GameOverWon = 3000;
 extern bool Color;
-
+using std::filesystem::directory_iterator;
+const char filenamestart[] = "pacman_";
+const char filenamefinish[] = ".screen";
+const char Legend = '&';
+const char EmptyPos = '%';
+const int SizeToCheck = 6;
 
 class Game
 {
 private: 
+	vector<vector<GameBoard>> board;
+	Pacman pacman;
+	vector<Ghost> ghosts;
+	Position _legend;
+	vector<string> GameFiles;
 	int _numBread;
 public:
 	Game();
 	~Game();
-	static bool CheckWall(const int& x, const int& y, GameBoard board[][SizeCol]);
-	static bool CheckTunnel(const int& x, const int& y, GameBoard board[][SizeCol]);
-	void CheckImpact(Pacman& pacman,Ghost* ghosts, GameBoard board[][SizeCol]);
-	//char DecideChar(const int& row, const int& col);
+	/*static bool CheckWall(const int& x, const int& y, GameBoard board[][SizeCol]);
+	static bool CheckTunnel(const int& x, const int& y, GameBoard board[][SizeCol]);*/
+	/*void CheckImpact(Pacman& pacman,Ghost* ghosts, GameBoard board[][SizeCol]);*/
+	void Start();
 	void GameCycle();
 	void InitBoard(GameBoard board[][SizeCol]);
 	void PrintBoard(GameBoard board[][SizeCol], Pacman& pacman, Ghost* ghosts) const;
@@ -38,4 +53,11 @@ public:
 	void PrintLifeLost(Pacman& pacman); 
 	void CheckTunnel(Pacman& pacman, GameBoard[][SizeCol]);
 	void turnColor();
+	void checkImpact(Ghost* ghosts, Fruit& frut, GameBoard[][SizeCol]);
+	void getGameFiles();
+	void checkFileNameFormat();
+	void getBoardInformation(int fileIndex);
+	void clearGame();
+	void createLegendRectangle();
+	void DecideChar(const int& row, const int& col, const char& ch);
 };

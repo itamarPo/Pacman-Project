@@ -20,12 +20,12 @@ void Position::SetCol(const int& col)
 	_col = col;
 }
 
-int Position::getRow()
+int Position::getRow() const
 {
 	return _row;
 }
 
-int Position::getCol()
+int Position::getCol() const
 {
 	return _col;
 }

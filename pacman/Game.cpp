@@ -52,18 +52,21 @@ void Game::CheckImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]
 }
 
 
+void Game::Start()
+{
+	getGameFiles();
+	Menu();
+}
+
 void Game::GameCycle()
 {
-	Ghost ghosts[2]; 
-	GhostInitialize(ghosts);
-	Pacman pac;
-	GameBoard board[SizeRow][SizeCol]; 
-	InitBoard(board);
-	PrintBoard(board, pac, ghosts);
-	GameRun(pac, ghosts, board);
-
-
-	
+//	//vector <Ghost> ghosts; 
+//	////GhostInitialize(ghosts);
+//	//Pacman pac;
+//	//pac.get
+//	InitBoard(board);
+//	PrintBoard(board, pac, ghosts);
+//	GameRun(pac, ghosts, board);
 }
 
 void Game::InitBoard(GameBoard board[][SizeCol])
@@ -387,3 +390,85 @@ void Game::turnColor()
 	Sleep(GameSpeed * 2);
 	clrscr();
 }
+
+void Game::checkImpact(Ghost* ghosts, Fruit& fruit, GameBoard[][SizeCol])
+{
+	int i;
+	for (i = 0; i < 2; i++)
+	{
+		if (fruit.getRow() == ghosts[i].getGhostRow())
+			if (fruit.getCol() == ghosts[i].getGhostCol())
+			{
+				fruit.setAppear();
+				return;
+			}
+	}
+	return;
+}
+
+void Game::getGameFiles()
+{
+	string path = "./";
+	for (const auto& file : directory_iterator(path))
+	{
+		GameFiles.push_back(file.path().filename().string()); // Add file's name to vector.
+		checkFileNameFormat(); //check if file format is ok
+	}
+}
+
+void Game::checkFileNameFormat()
+{
+	string last = GameFiles[GameFiles.size() - 1];
+	int namesize = last.size(), i, j = SizeToCheck;
+	for (i = 0; i < SizeToCheck; i++, namesize--, j--)
+	{
+		if ((last[i] != filenamestart[i]) || (last[namesize - 1] != filenamefinish[j]))
+		{
+			GameFiles.pop_back();
+			return;
+		}
+	}
+}
+
+void Game::DecideChar(const int& row, const int& col, const char& ch)
+{
+	switch (ch)
+	{
+	case '@': pacman.setPacmanStartPosition(row, col);
+
+	}
+}
+
+void Game::getBoardInformation(int fileIndex, int& colCounter,int& rowCounter)
+{
+	ifstream File;
+	//vector<string> line;
+	char ch;
+	int colCounter = 0, rowCounter = 0 , maxCol=0;
+	File.open(GameFiles[fileIndex]);
+	if (!File)
+	{
+		cout << "Error getting file";
+		return;
+	}
+	do ()
+	{
+		if (ch != '\n')
+		{
+			/*check ch function*/
+			if (rowCounter == 0)
+			{
+				colCounter++;
+				maxCol++;
+			}
+		}
+		else
+		{
+			rowCounter++;
+			colCounter = 0;
+		}
+	}while ();
+}
+ 
+/*Need to intiliaize Pacman position, also ghosts.
+problem with &.*/

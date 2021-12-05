@@ -30,6 +30,14 @@ void Pacman::setPacmanPosition()
 	
 }
 
+void Pacman::setPacmanStartPosition(const int& row, const int& col)
+{
+	_pos.SetCol(col);
+	_pos.SetRow(row);
+	_startPos.SetCol(col);
+	_startPos.SetRow(row);
+}
+
 void Pacman::setPacmanScore(int bonus)
 {
 	_score = _score + bonus;
