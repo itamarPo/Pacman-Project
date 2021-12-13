@@ -433,44 +433,88 @@ void Game::checkFileNameFormat()
 	}
 }
 
-void Game::DecideChar(const int& row, const int& col, const char& ch)
+
+
+void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear)
 {
+	
+	Ghost ghost;
+	if (legend_appear)
+	{
+		if (_legend.getRow() < row <= _legend.getRow() + 2)
+		{
+			if (_legend.getCol() < col <= _legend.getCol() + 19)
+			{
+				board[row][col].setGamePiece(WALL);
+				return;
+			}
+		}
+	}
 	switch (ch)
 	{
-	case '@': pacman.setPacmanStartPosition(row, col);
-
+	case Pacman_sign: pacman.setPacmanStartPosition(row, col);
+		board[row][col].setGamePiece(Space);
+		break;
+	case Ghost_sign: 
+		if (ghosts.size() != 1)
+		{
+			ghosts.push_back(ghost);
+		}
+		ghosts[ghosts.size() - 1].SetPosition(row, col);
+		board[row][col].setGamePiece(FOOD);
+		_numBread++;
+		break;
+	case Legend: legend_appear = true;
+		_legend.SetCol(col);
+		_legend.SetRow(row);
+		board[row][col].setGamePiece(WALL);
+		break;
+	case Space: 
+		board[row][col].setGamePiece(Space);
+		_numBread++;
+		break;
+	default: board[row][col].setGamePiece(ch);
 	}
 }
 
-void Game::getBoardInformation(int fileIndex, int& colCounter,int& rowCounter)
+/*maxrow and maxcol are used for tunnels*/
+void Game::getBoardInformation(int fileIndex, int& maxRow, int& maxCol)
 {
 	ifstream File;
+	vector<GameBoard> boardLine;
+	GameBoard boardCol;
+	bool legend_appear = false;
 	//vector<string> line;
-	char ch;
-	int colCounter = 0, rowCounter = 0 , maxCol=0;
+	int colCounter = 0, maxCol=0;
 	File.open(GameFiles[fileIndex]);
+	char ch;
+	File.get(ch);
 	if (!File)
 	{
 		cout << "Error getting file";
 		return;
 	}
-	do ()
+	while(!File.eof())
 	{
 		if (ch != '\n')
 		{
-			/*check ch function*/
-			if (rowCounter == 0)
+			if(colCounter!=0)
+				board[maxRow].push_back(boardCol);
+			DecideChar(maxRow, colCounter, ch, legend_appear);
+			colCounter++;
+			if (maxRow == 0)
 			{
-				colCounter++;
 				maxCol++;
 			}
 		}
 		else
 		{
-			rowCounter++;
+			board.push_back(boardLine);
+			maxRow++;
 			colCounter = 0;
 		}
-	}while ();
+		File.get(ch);
+	}
 }
  
 /*Need to intiliaize Pacman position, also ghosts.

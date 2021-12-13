@@ -18,6 +18,7 @@ const char filenamestart[] = "pacman_";
 const char filenamefinish[] = ".screen";
 const char Legend = '&';
 const char EmptyPos = '%';
+const char Space = ' ';
 const int SizeToCheck = 6;
 
 class Game
@@ -56,8 +57,8 @@ public:
 	void checkImpact(Ghost* ghosts, Fruit& frut, GameBoard[][SizeCol]);
 	void getGameFiles();
 	void checkFileNameFormat();
-	void getBoardInformation(int fileIndex);
+	void getBoardInformation(int fileIndex, int& maxRow, int& maxCol);
 	void clearGame();
 	void createLegendRectangle();
-	void DecideChar(const int& row, const int& col, const char& ch);
+	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear);
 };

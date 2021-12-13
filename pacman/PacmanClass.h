@@ -31,7 +31,7 @@ private:
 	char _direction;
 
 public:
-	Pacman(const int row = StartRow, const int col = StartCol, const int score = StartScore, const int Lives = StartLives, const char direction = STAY);
+	Pacman(const int row = 0, const int col = 0, const int score = StartScore, const int Lives = StartLives, const char direction = STAY);
 	~Pacman();
 	void setPacmanPosition();
 	void setPacmanStartPosition(const int& row, const int& col);
