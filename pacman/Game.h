@@ -60,5 +60,6 @@ public:
 	void getBoardInformation(int fileIndex, int& maxRow, int& maxCol);
 	void clearGame();
 	void createLegendRectangle();
+	void SpecificFileCycle();
 	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear);
 };

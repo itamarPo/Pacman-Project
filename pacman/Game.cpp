@@ -123,13 +123,17 @@ void Game::Menu()
 	char user_input;
 	PrintMenu();
 	Color = false;
+	
 	do
 	{
 		user_input = _getch();
 		switch (user_input)
 		{
-		case '1': GameCycle();
+		case '1':
+			GameCycle();
 			break;
+		case '2': /*function to run a specific board.*/
+
 		case '7': turnColor();
 			break;
 		case '8': 
@@ -137,6 +141,7 @@ void Game::Menu()
 			break;
 		case '9': clrscr();
 			cout << "Good Bye" << endl;
+			GameFiles.clear();
 			return;
 		default: clrscr();
 			cout << "Incorrect input";
@@ -152,7 +157,8 @@ void Game::PrintMenu() const
 {
 	clrscr();
 	cout << "Welcome To Pacman" << endl;
-	cout << "(1) Start a new game" << endl;
+	cout << "(1) Start a new regular game" << endl;
+	cout << "(2) Start a specific level of your choice" << endl;
 	cout << "(7) Turn on/off colors" << endl;
 	cout << "(8) Present instructions and keys" << endl;
 	cout << "(9) EXIT" << endl;
@@ -435,6 +441,27 @@ void Game::checkFileNameFormat()
 
 
 
+void Game::SpecificFileCycle()
+{
+	string file_name;
+	int fileIndex, maxRow = 0, maxCol = 0;
+	cout << "Please enter the file's name you wish to play" << endl;
+	cin >> file_name;
+
+	if (binary_search(GameFiles.begin(), GameFiles.end(), file_name))
+	{
+		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
+		getBoardInformation(fileIndex, maxRow, maxCol);
+		GameRun(); //tomorrow
+	}
+	else
+	{
+		cout << "File was not found" << endl;
+		Sleep(2000);
+		return;
+	}
+}
+
 void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear)
 {
 	
@@ -483,6 +510,12 @@ void Game::getBoardInformation(int fileIndex, int& maxRow, int& maxCol)
 	ifstream File;
 	vector<GameBoard> boardLine;
 	GameBoard boardCol;
+	Ghost ghost;
+	if (board.empty() && ghosts.empty())
+	{
+		board.push_back(boardLine);
+		ghosts.push_back(ghost);
+	}
 	bool legend_appear = false;
 	//vector<string> line;
 	int colCounter = 0, maxCol=0;
@@ -515,6 +548,20 @@ void Game::getBoardInformation(int fileIndex, int& maxRow, int& maxCol)
 		}
 		File.get(ch);
 	}
+}
+
+void Game::clearGame()
+{
+	for (int i = 0; i < board.size() - 1; i++)
+	{
+		board[i].clear();
+	}
+	board.clear();
+	ghosts.clear();
+	_numBread = 0;
+	pacman.setPacmanScore(StartScore);
+	pacman.setPacmanLives(StartLives);
+	pacman.setPacmanDirection(STAY);
 }
  
 /*Need to intiliaize Pacman position, also ghosts.
