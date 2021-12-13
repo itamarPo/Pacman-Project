@@ -60,13 +60,16 @@ void Game::Start()
 
 void Game::GameCycle()
 {
-//	//vector <Ghost> ghosts; 
-//	////GhostInitialize(ghosts);
-//	//Pacman pac;
-//	//pac.get
-//	InitBoard(board);
-//	PrintBoard(board, pac, ghosts);
-//	GameRun(pac, ghosts, board);
+	Ghost ghosts[2]; 
+	GhostInitialize(ghosts);
+	Pacman pac;
+	GameBoard board[SizeRow][SizeCol]; 
+	InitBoard(board);
+	PrintBoard(board, pac, ghosts);
+	GameRun(pac, ghosts, board);
+
+
+	
 }
 
 void Game::InitBoard(GameBoard board[][SizeCol])
