@@ -3,6 +3,7 @@
 #include "GotoXY.h"
 #include "Position.h"
 #include "Game.h"
+#include "GameObject.h"
 const char Pacman_sign = '@';
 const char UP = 'w';
 const char UPW = 'W';
@@ -21,7 +22,7 @@ const int StartScore = 0;
 const int StartLives = 3;
 extern bool Color;
 
-class Pacman
+class Pacman : public GameObject
 {
 private:
 	Position _pos;
@@ -37,16 +38,16 @@ public:
 	void setPacmanStartPosition(const int& row, const int& col);
 	void setPacmanScore(int bonus = 1);
 	void setPacmanLives(int minus = 1);
-	void setPacmanDirection(const char direction);
+	void setPacmanDirection(const char& direction);
 	void setPacmanIfTunnel(const int row, const int col);
-	void printPacman();
+	void printPacman() const; 
 	int getPacmanRow();
 	int getPacmanCol();
 	int getPacmanScore() const;
 	int getPacmanLives() const;
 	void ResetPos();
 	char getPacmanDirection()const;
-	bool CheckIfPacmanHitWall(GameBoard board[][SizeCol]);
+	bool CheckIfPacmanHitWall(vector<vector<GameBoard>> board); // add parameters
 
 
 };

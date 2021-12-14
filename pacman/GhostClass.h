@@ -20,13 +20,13 @@ public:
 
 	int getGhostRow();
 	int getGhostCol();
-	GhostDirection GetDirection();
+	//GhostDirection GetDirection();
 
-	void Print();
+	void Print()const;
 	void UpdateMove(GameBoard board[][SizeCol]);
-	GhostDirection SetMove(GameBoard board[][SizeCol]);
+	//GhostDirection SetMove(GameBoard board[][SizeCol]);
 	void Movement(GameBoard board[][SizeCol]);
-	bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
+	//bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
 
 private:
 	Position _pos;

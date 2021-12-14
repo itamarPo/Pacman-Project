@@ -23,7 +23,7 @@ void Ghost::SetPosition(const int row, const int col)
 
 
 
-void Ghost::Print()
+void Ghost::Print()const
 {
 	gotoxy(_pos.getRow(), _pos.getCol());
 	if (Color)
