@@ -1,19 +1,19 @@
 #include "GameObject.h"
-
+#include <vector>
 void GameObject::SetPosition(const int row, const int col)
 {
 	_pos.SetRow(row);
 	_pos.SetCol(col);
 }
 
-bool GameObject::CheckWall(const int& x, const int& y, GameBoard board[][SizeCol])
+bool GameObject::CheckWall(const int& row, const int& col, vector<vector<GameBoard>> board)
 {
-	if (board[x][y].getSignpiece() == WALL)
+	if (board[row][col].getSignpiece() == WALL)
 		return true;
 	return false;
 }
 
-bool GameObject::CheckTunnel(const int& row, const int& col, GameBoard board[][SizeCol])
+bool GameObject::CheckTunnel(const int& row, const int& col, vector<vector<GameBoard>> board)
 {
 	if (col == 29)
 	{
@@ -26,7 +26,7 @@ bool GameObject::CheckTunnel(const int& row, const int& col, GameBoard board[][S
 	return false;
 }
 
-bool GameObject::Obstacle(const int& row, const int& col, GameBoard board[][SizeCol], Direction direction)
+bool GameObject::Obstacle(const int& row, const int& col, vector<vector<GameBoard>> board, Direction direction)
 {
 	switch (direction)
 	{

@@ -48,7 +48,7 @@ void Pacman::setPacmanLives(int minus)
 	_remaininglives = _remaininglives - minus;
 }
 
-void Pacman::setPacmanDirection(const char direction)
+void Pacman::setPacmanDirection(const char& direction)
 {
 	_direction = direction;
 }
@@ -59,7 +59,7 @@ void Pacman::setPacmanIfTunnel(const int row, const int col)
 	_pos.SetCol(col);
 }
 
-void Pacman::printPacman()
+void Pacman::printPacman() const
 {
 	gotoxy(_pos.getRow(),_pos.getCol());
 	if (Color)
@@ -101,7 +101,7 @@ char Pacman::getPacmanDirection() const
 	return _direction;
 }
 
-bool Pacman::CheckIfPacmanHitWall(GameBoard board[][SizeCol])
+bool Pacman::CheckIfPacmanHitWall(vector<vector<GameBoard>> board)
 {
 	
 	if (_direction == UP || _direction == UP - 32)

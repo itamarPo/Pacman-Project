@@ -10,10 +10,11 @@ Game::~Game()
 {
 }
 
+/*
 bool Game::CheckWall(const int& x,const int& y, GameBoard board[][SizeCol])
 {
 	if (board[x][y].getSignpiece() == WALL)
-		return true;
+		return true; 
 	return false;
 }
 
@@ -28,8 +29,8 @@ bool Game::CheckTunnel(const int& row, const int& col, GameBoard board[][SizeCol
 		if (col == 0 || col == 59)
 			return true;
 	return false;
-}
-
+}*/
+/*
 void Game::CheckImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
 {
 	int i;
@@ -50,7 +51,7 @@ void Game::CheckImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]
 	}
 	return;
 }
-
+*/
 
 void Game::Start()
 {
@@ -105,16 +106,16 @@ void Game::InitBoard(GameBoard board[][SizeCol])
 	File.close();
 }
 
-void Game::PrintBoard(GameBoard board[][SizeCol], Pacman& pacman, Ghost* ghosts) const
+void Game::PrintBoard(int& maxRow, int& maxCol) const
 {
 	int row, col;
-	for(row=0; row <SizeRow; row++)
-		for (col = 0; col < SizeCol; col++)
+	for(row=0; row <maxRow; row++)
+		for (col = 0; col < maxCol; col++)
 			board[row][col].printPiece(row,col);
-	for (auto i = 0; i < 2; i++)
+	for (auto i = 0; i < ghosts.size(); i++)
 		ghosts[i].Print();
 	pacman.printPacman();
-	PrintScoreAndLives(pacman);
+	PrintScoreAndLives();
 	
 }
 
@@ -130,10 +131,11 @@ void Game::Menu()
 		switch (user_input)
 		{
 		case '1':
-			GameCycle();
+			RegularGame();
 			break;
-		case '2': /*function to run a specific board.*/
-
+		case '2':
+			SpecificFileCycle();
+			break;
 		case '7': turnColor();
 			break;
 		case '8': 
@@ -191,47 +193,49 @@ void Game::Instructions(char& user_input)
 	} while (user_input != 27);
 }
 
-void Game::GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
+void Game::GameRun(int& maxRow, int& maxCol)
 {
-	char flush;
-	char tmp_move = 0;
-	bool is_ghost_turn = false;
-	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
-	{
-		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
-		{
-			clrscr();
-			PrintBoard(board, pacman, ghosts);
-		}
-		if (_kbhit()) //if the user pressed any key
-		{
-			tmp_move = getKey(); //get char entered by user.
-			if (IsMoveValid(tmp_move) == true) //check if its a vaild move for pacman.
-			{
-				if (tmp_move == PAUSE)
-					continue;
-				else
-					pacman.setPacmanDirection(tmp_move);
-			}
-		}
+//	char flush;
+//	char tmp_move = 0;
+//	bool is_ghost_turn = false;
+//	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
+//	{
+//		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
+//		{
+//			clrscr();
+//			PrintBoard(maxRow, maxCol);
+//		}
+//		if (_kbhit()) //if the user pressed any key
+//		{
+//			tmp_move = getKey(); //get char entered by user.
+//			if (IsMoveValid(tmp_move) == true) //check if its a vaild move for pacman.
+//			{
+//				if (tmp_move == PAUSE)
+//					continue;
+//				else
+//					pacman.setPacmanDirection(tmp_move);
+//			}
+//		}
 		
-		ConsequencesOfMove(pacman, ghosts, board, is_ghost_turn);
-		if (pacman.getPacmanLives() != 0)
-			PrintScoreAndLives(pacman);
-		Sleep(GameSpeed);
-	}
-	clrscr();
-	gotoxy(10, 20);
-	if (pacman.getPacmanLives() == 0)
-		cout << "Game Over!";
-	else
-		cout << "Congratulations, you won!!";
-	Sleep(GameOverWon);
-	clrscr();
-	cout << "Press any key to return to the menu";
-	while (!_kbhit());
-	flush = _getch();
-	clrscr();
+//		ConsequencesOfMove(pacman, ghosts, board, is_ghost_turn);
+//		if (pacman.getPacmanLives() != 0)
+//			PrintScoreAndLives(pacman);
+//		Sleep(GameSpeed);
+//	}
+//	clrscr();
+//	gotoxy(10, 20);
+//	/*
+//	if (pacman.getPacmanLives() == 0)
+//		cout << "Game Over!";
+//	else
+//		cout << "Congratulations, you won!!";
+//	Sleep(GameOverWon);
+//	clrscr();
+//	cout << "Press any key to return to the menu";
+//	while (!_kbhit());
+//	flush = _getch();
+//	clrscr();
+//	*/
 }
 
 bool Game::IsGamePaused(char& pause)
@@ -277,9 +281,10 @@ bool Game::IsMoveValid(const char& ch)
 }
 
 /*this function checks if pacman ate, hit a ghost, or got into a tunnel*/
+/*
 void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], bool& is_ghost_turn)
 {
-	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol();
+	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol(); 
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
 	PacmanCheck(pacman, board);
 	CheckImpact(pacman, ghosts, board);
@@ -299,7 +304,7 @@ void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][S
 	
 }
 
-void Game::PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol])
+void Game::PacmanCheck(Pacman& pacman, )
 {
 	if (pacman.CheckIfPacmanHitWall(board) == true)
 	{
@@ -320,14 +325,32 @@ void Game::CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol])
 		_numBread--;
 		board[pacman.getPacmanRow()][pacman.getPacmanCol()].setGamePiece(' ');
 	}
-}
+}*/
 
-void Game::PrintScoreAndLives(Pacman& pacman) const
+void Game::PrintScoreAndLives() const
 {
-	gotoxy(21, 0);
-	cout << "Your score: " << pacman.getPacmanScore();
-	gotoxy(21, 30);
-	cout << "Remaining lives: " << pacman.getPacmanLives();
+	int i,j;
+	gotoxy(_legend.getRow(), _legend.getCol());
+	string score = "Your score: ";
+	string legend[3];
+	for (i = 0; i < 3; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			legend[i] = "Your score: " + to_string(pacman.getPacmanScore());
+			break;
+		case 1:
+			legend[i] = "Remaining lives: " + to_string(pacman.getPacmanLives());
+			break;
+		}
+		for (j = legend[i].size(); j < 20; j++)
+		{
+			cout << " ";
+		}
+		cout << endl;
+		gotoxy(_legend.getRow()+i, _legend.getCol());
+	}
 }
 
 
@@ -441,6 +464,23 @@ void Game::checkFileNameFormat()
 
 
 
+void Game::RegularGame()
+{
+	int size = GameFiles.size(), i,maxRow = 0, maxCol = 0;
+	for (i = 0 ; i < size ; i++)
+	{
+		getBoardInformation(i, maxRow, maxCol);
+		//gamerun
+		if (pacman.getPacmanLives() == 0)
+		{
+			ClearGame();
+			return;
+		}
+		else
+			ClearLevel();
+	}
+}
+
 void Game::SpecificFileCycle()
 {
 	string file_name;
@@ -452,7 +492,7 @@ void Game::SpecificFileCycle()
 	{
 		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
 		getBoardInformation(fileIndex, maxRow, maxCol);
-		GameRun(); //tomorrow
+		//GameRun(); //tomorrow
 	}
 	else
 	{
@@ -460,6 +500,18 @@ void Game::SpecificFileCycle()
 		Sleep(2000);
 		return;
 	}
+
+}
+
+void Game::ClearLevel()
+{
+	for (int i = 0; i < board.size() - 1; i++)
+	{
+		board[i].clear();
+	}
+	board.clear();
+	ghosts.clear();
+	_numBread = 0;
 }
 
 void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear)
@@ -550,15 +602,9 @@ void Game::getBoardInformation(int fileIndex, int& maxRow, int& maxCol)
 	}
 }
 
-void Game::clearGame()
+void Game::ClearGame()
 {
-	for (int i = 0; i < board.size() - 1; i++)
-	{
-		board[i].clear();
-	}
-	board.clear();
-	ghosts.clear();
-	_numBread = 0;
+	ClearLevel();
 	pacman.setPacmanScore(StartScore);
 	pacman.setPacmanLives(StartLives);
 	pacman.setPacmanDirection(STAY);
