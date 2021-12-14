@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include "GameObject.h"
 
 const char Pacman_sign = '@';

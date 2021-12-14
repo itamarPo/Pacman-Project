@@ -108,7 +108,7 @@ void GameObject::Movement(vector<vector<GameBoard>> board)
 
 int GameObject::getRow()
 {
-	_pos.getRow();
+	return _pos.getRow();
 }
 
 int GameObject::getCol()

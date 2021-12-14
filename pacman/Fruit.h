@@ -16,7 +16,7 @@ public:
     bool checkAppear() const;
    
     void Print() const;
-    void Movement(vector<vector<GameBoard>> board);
+    //void Movement(vector<vector<GameBoard>> board);
 
 private:
     bool _appear;

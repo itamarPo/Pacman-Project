@@ -1,5 +1,5 @@
 #pragma once
-#include <iostream>
+#include "GotoXY.h"
 using namespace std;
 extern bool Color;
 

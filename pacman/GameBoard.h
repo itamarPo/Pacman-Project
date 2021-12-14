@@ -1,11 +1,9 @@
 #pragma once
-#include <iostream>
+#include "Position.h"
 const int SizeRow = 20;
 const int SizeCol = 60;
 const char FOOD = (char)248;
 const char WALL = '#';
-#include "GotoXY.h"
-#include "Position.h"
 extern bool Color;
 const char YELLOW[] = "\033[33m";     /* Yellow */
 const char BLUE[] = "\033[34m";      /* Blue */
