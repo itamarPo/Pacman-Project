@@ -1,5 +1,5 @@
 #include "GameObject.h"
-
+#include <vector>
 void GameObject::SetPosition(const int row, const int col)
 {
 	_pos.SetRow(row);
