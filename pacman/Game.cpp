@@ -195,6 +195,7 @@ void Game::Instructions(char& user_input)
 
 void Game::GameRun(int& maxRow, int& maxCol)
 {
+	PrintBoard(maxRow, maxCol);
 //	char flush;
 //	char tmp_move = 0;
 //	bool is_ghost_turn = false;
@@ -344,12 +345,13 @@ void Game::PrintScoreAndLives() const
 			legend[i] = "Remaining lives: " + to_string(pacman.getPacmanLives());
 			break;
 		}
+		cout << legend[i];
 		for (j = legend[i].size(); j < 20; j++)
 		{
 			cout << " ";
 		}
 		cout << endl;
-		gotoxy(_legend.getRow()+i, _legend.getCol());
+		gotoxy(_legend.getRow()+(i+1), _legend.getCol());
 	}
 }
 
@@ -496,7 +498,7 @@ void Game::SpecificFileCycle()
 	{
 		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
 		getBoardInformation(fileIndex, maxRow, maxCol);
-		//GameRun(); //tomorrow
+		GameRun(maxRow, maxCol); //tomorrow
 	}
 	else
 	{
@@ -518,10 +520,10 @@ void Game::ClearLevel()
 	_numBread = 0;
 }
 
-void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear)
+void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, Ghost& ghost)
 {
 	
-	Ghost ghost;
+	
 	if (legend_appear)
 	{
 		if (_legend.getRow() < row && row <= _legend.getRow() + 2)
@@ -538,11 +540,8 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 	case Pacman_sign: pacman.setPacmanStartPosition(row, col);
 		board[row][col].setGamePiece(Space);
 		break;
-	case Ghost_sign: 
-		if (ghosts.size() != 1)
-		{
-			ghosts.push_back(ghost);
-		}
+	case Ghost_sign:
+		ghosts.push_back(ghost);
 		ghosts[ghosts.size() - 1].SetPosition(row, col);
 		board[row][col].setGamePiece(FOOD);
 		_numBread++;
@@ -553,7 +552,7 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 		board[row][col].setGamePiece(WALL);
 		break;
 	case Space: 
-		board[row][col].setGamePiece(Space);
+		board[row][col].setGamePiece(FOOD);
 		_numBread++;
 		break;
 	default: board[row][col].setGamePiece(ch);
@@ -570,26 +569,25 @@ void Game::getBoardInformation(int fileIndex, int& maxRow, int& maxCol)
 	if (board.empty() && ghosts.empty())
 	{
 		board.push_back(boardLine);
-		ghosts.push_back(ghost);
 	}
 	bool legend_appear = false;
 	//vector<string> line;
 	int colCounter = 0; //maxCol=0;
 	File.open(GameFiles[fileIndex]);
-	char ch;
-	File.get(ch);
 	if (!File)
 	{
 		cout << "Error getting file";
 		return;
 	}
+	char ch;
+	File.get(ch);
+	
 	while(!File.eof())
 	{
 		if (ch != '\n')
 		{
-			if(colCounter!=0)
-				board[maxRow].push_back(boardCol);
-			DecideChar(maxRow, colCounter, ch, legend_appear);
+			board[maxRow].push_back(boardCol);
+			DecideChar(maxRow, colCounter, ch, legend_appear, ghost);
 			colCounter++;
 			if (maxRow == 0)
 			{

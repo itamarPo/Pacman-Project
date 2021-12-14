@@ -61,5 +61,5 @@ public:
 	void RegularGame();
 	void SpecificFileCycle();
 	void ClearLevel();
-	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear);
+	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, Ghost& ghost);
 };

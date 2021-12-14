@@ -4,7 +4,7 @@ bool Color = false;
 int main()
 {
 	Game game;
-	game.Menu();
+	game.Start();
 	return 0;
 }
 
