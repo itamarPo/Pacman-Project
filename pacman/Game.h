@@ -6,10 +6,8 @@
 #include "Fruit.h"
 #include <filesystem>
 #include <string>
-#include <vector>
 #include <fstream>
-class Ghost;
-class Pacman;
+
 const int GameSpeed = 200;
 const int GameOverWon = 3000;
 extern bool Color;
@@ -46,20 +44,20 @@ public:
 	void GameRun(int& maxRow, int& maxCol);
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
-	void ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], bool& is_ghost_turn);
-	void PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol]);
-	void CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol]);
+	//void ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], bool& is_ghost_turn);
+	//void PacmanCheck();
+	//void CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol]);
 	void PrintScoreAndLives()const;
-	void GhostInitialize(Ghost* ghosts);
-	void PrintLifeLost(Pacman& pacman); 
-	void CheckTunnel(Pacman& pacman, GameBoard[][SizeCol]);
+	//void GhostInitialize(Ghost* ghosts);
+	//void PrintLifeLost(Pacman& pacman); 
+	//void CheckTunnel(Pacman& pacman, GameBoard[][SizeCol]);
 	void turnColor();
-	void checkImpact(Ghost* ghosts, Fruit& frut, GameBoard[][SizeCol]);
+	//void checkImpact(Ghost* ghosts, Fruit& frut, GameBoard[][SizeCol]);
 	void getGameFiles();
 	void checkFileNameFormat();
 	void getBoardInformation(int fileIndex, int& maxRow, int& maxCol);
 	void ClearGame();
-	void createLegendRectangle();
+	//void createLegendRectangle();
 	void RegularGame();
 	void SpecificFileCycle();
 	void ClearLevel();

@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include "GameObject.h"
-#include "GotoXY.h"
-#include "Game.h"
+
+
 using namespace std;
 const int StartGhostRow = 7;
 const int StartGhostCol = 54;
@@ -20,17 +20,17 @@ public:
 
 	int getGhostRow();
 	int getGhostCol();
-	//GhostDirection GetDirection();
+	Direction GetDirection();
 
 	void Print()const;
-	void UpdateMove(GameBoard board[][SizeCol]);
+	void UpdateMove(vector<vector<GameBoard>> board);
 	//GhostDirection SetMove(GameBoard board[][SizeCol]);
-	void Movement(GameBoard board[][SizeCol]);
+	//void Movement(vector<vector<GameBoard>> board);
 	//bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
 
 private:
 	Position _pos;
 	int move_counter;
-	GhostDirection direction;
+	Direction direction;
 };
 

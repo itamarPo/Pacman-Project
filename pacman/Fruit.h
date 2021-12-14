@@ -7,16 +7,16 @@ class Fruit : public GameObject
 {
 public:
     Fruit();
-    void setStartPos(GameBoard board[][SizeCol]);
+    void setStartPos(vector<vector<GameBoard>> board);
     void setScore();
     void setAppear();
-    void updateStatus(GameBoard board[][SizeCol]);
+    void updateStatus(vector<vector<GameBoard>> board);
     void setMovesAppear();
     
     bool checkAppear() const;
    
     void Print() const;
-    void Movement(GameBoard board[][SizeCol]);
+    void Movement(vector<vector<GameBoard>> board);
 
 private:
     bool _appear;

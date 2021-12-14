@@ -62,12 +62,12 @@ void Game::Start()
 void Game::GameCycle()
 {
 	Ghost ghosts[2]; 
-	GhostInitialize(ghosts);
+	//GhostInitialize(ghosts);
 	Pacman pac;
 	GameBoard board[SizeRow][SizeCol]; 
 	InitBoard(board);
-	PrintBoard(board, pac, ghosts);
-	GameRun(pac, ghosts, board);
+	//PrintBoard(board, pac, ghosts);
+	//GameRun(pac, ghosts, board);
 
 
 	
@@ -353,7 +353,7 @@ void Game::PrintScoreAndLives() const
 	}
 }
 
-
+/*
 void Game::GhostInitialize(Ghost* ghosts)
 {
 	int i;
@@ -361,8 +361,9 @@ void Game::GhostInitialize(Ghost* ghosts)
 	{
 		ghosts[i].SetPosition(StartGhostRow + i * 10, StartGhostCol);
 	}
-}
+}*/
 
+/*
 void Game::PrintLifeLost(Pacman& pacman)
 {
 	clrscr();
@@ -377,7 +378,9 @@ void Game::PrintLifeLost(Pacman& pacman)
 	}
 	clrscr();
 }
+*/
 
+/*
 void Game::CheckTunnel(Pacman& pacman, GameBoard[][SizeCol])
 {
 	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol();
@@ -409,7 +412,7 @@ void Game::CheckTunnel(Pacman& pacman, GameBoard[][SizeCol])
 	}
 	return;
 }
-
+*/
 void Game::turnColor()
 {
 	clrscr();
@@ -423,6 +426,7 @@ void Game::turnColor()
 	clrscr();
 }
 
+/*
 void Game::checkImpact(Ghost* ghosts, Fruit& fruit, GameBoard[][SizeCol])
 {
 	int i;
@@ -437,7 +441,7 @@ void Game::checkImpact(Ghost* ghosts, Fruit& fruit, GameBoard[][SizeCol])
 	}
 	return;
 }
-
+*/
 void Game::getGameFiles()
 {
 	string path = "./";
@@ -520,9 +524,9 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 	Ghost ghost;
 	if (legend_appear)
 	{
-		if (_legend.getRow() < row <= _legend.getRow() + 2)
+		if (_legend.getRow() < row && row <= _legend.getRow() + 2)
 		{
-			if (_legend.getCol() < col <= _legend.getCol() + 19)
+			if (_legend.getCol() < col && col <= _legend.getCol() + 19)
 			{
 				board[row][col].setGamePiece(WALL);
 				return;
@@ -570,7 +574,7 @@ void Game::getBoardInformation(int fileIndex, int& maxRow, int& maxCol)
 	}
 	bool legend_appear = false;
 	//vector<string> line;
-	int colCounter = 0, maxCol=0;
+	int colCounter = 0; //maxCol=0;
 	File.open(GameFiles[fileIndex]);
 	char ch;
 	File.get(ch);

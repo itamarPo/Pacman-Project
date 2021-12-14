@@ -6,7 +6,7 @@ Ghost::Ghost()
 	_pos.SetRow(0);
 	_pos.SetCol(0);
 	move_counter = 0;
-	direction = GhostDirection(rand() % 4);
+	direction = Direction(rand() % 4);
 }
 
 Ghost::~Ghost()
@@ -36,7 +36,7 @@ void Ghost::Print()const
 }
 
 
-void Ghost::UpdateMove(GameBoard board[][SizeCol])
+void Ghost::UpdateMove(vector<vector<GameBoard>> board)
 {
 	if (move_counter == 20 || Obstacle(_pos.getRow(), _pos.getCol(), board, direction))
 	{
@@ -48,7 +48,7 @@ void Ghost::UpdateMove(GameBoard board[][SizeCol])
 	move_counter++;
 }
 
-
+/*
 GhostDirection Ghost::SetMove(GameBoard board[][SizeCol])
 {
 	int random_move, row = _pos.getRow(), col = _pos.getCol(); 
@@ -84,8 +84,9 @@ GhostDirection Ghost::SetMove(GameBoard board[][SizeCol])
 	
 	
 }
-
+*/
 /*update the ghost position and prints the position of the older board piece it has overwritten*/
+/*
 void Ghost::Movement(GameBoard board[][SizeCol])
 {
 	int row = _pos.getRow(), col = _pos.getCol();
@@ -108,7 +109,7 @@ void Ghost::Movement(GameBoard board[][SizeCol])
 		break;
 	}
 }
-
+*/
 int Ghost::getGhostRow()
 {
 	return _pos.getRow();
@@ -119,11 +120,11 @@ int Ghost::getGhostCol()
 	return _pos.getCol();
 }
 
-GhostDirection Ghost::GetDirection()
+Direction Ghost::GetDirection()
 {
 	return direction;
 }
-
+/*
 bool Ghost::Obstacle(const int& row, const int& col, GameBoard board[][SizeCol], GhostDirection direction) const
 {
 	switch (direction)
@@ -143,3 +144,4 @@ bool Ghost::Obstacle(const int& row, const int& col, GameBoard board[][SizeCol],
 	}	
 	return false;
 }
+*/

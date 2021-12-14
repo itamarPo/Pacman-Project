@@ -9,9 +9,9 @@ Fruit::Fruit()
 	_direction = (Direction)(rand() % 4);
 }
 
-void Fruit::setStartPos(GameBoard board[][SizeCol])
+void Fruit::setStartPos(vector<vector<GameBoard>> board)
 {
-	int row, col;
+	int row=0, col=0;
 	do
 	{
 		row = rand() % 20;
@@ -33,7 +33,7 @@ void Fruit::setAppear()
 	_appear = !_appear;
 }
 
-void Fruit::updateStatus(GameBoard board[][SizeCol])
+void Fruit::updateStatus(vector<vector<GameBoard>> board)
 {
 	_moves++;
 	if (_appear)
@@ -87,7 +87,8 @@ void Fruit::Print() const
 	cout << _scoreNum;
 }
 
-void Fruit::Movement(GameBoard board[][SizeCol])
+/*
+void Fruit::Movement(vector<vector<GameBoard>> board)
 {
 	int row = _pos.getRow(), col = _pos.getCol();
 
@@ -109,3 +110,4 @@ void Fruit::Movement(GameBoard board[][SizeCol])
 		break;
 	}
 }
+*/

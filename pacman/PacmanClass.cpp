@@ -106,19 +106,19 @@ bool Pacman::CheckIfPacmanHitWall(vector<vector<GameBoard>> board)
 	
 	if (_direction == UP || _direction == UP - 32)
 	{
-		return Game::CheckWall(_pos.getRow() - 1, _pos.getCol(), board);
+		return CheckWall(_pos.getRow() - 1, _pos.getCol(), board);
 	}
 	else if (_direction == DOWN || _direction == DOWN - 32)
 	{
-		return Game::CheckWall(_pos.getRow() + 1, _pos.getCol(), board);
+		return CheckWall(_pos.getRow() + 1, _pos.getCol(), board);
 	}
 	else if (_direction == LEFT || _direction == LEFT - 32)
 	{
-		return Game::CheckWall(_pos.getRow(), _pos.getCol() - 1, board);
+		return CheckWall(_pos.getRow(), _pos.getCol() - 1, board);
 	}
 	else if (_direction == RIGHT || _direction == RIGHT - 32)
 	{
-		return Game::CheckWall(_pos.getRow(), _pos.getCol() + 1, board);
+		return CheckWall(_pos.getRow(), _pos.getCol() + 1, board);
 	}
 	else
 		return false;

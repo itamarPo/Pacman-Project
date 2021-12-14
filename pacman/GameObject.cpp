@@ -82,6 +82,30 @@ Direction GameObject::SetMove(vector<vector<GameBoard>> board)
 
 }
 
+void GameObject::Movement(vector<vector<GameBoard>> board)
+{
+	int row = _pos.getRow(), col = _pos.getCol();
+
+	switch (_direction)
+	{
+	case Direction::Up: SetPosition(row - 1, col);
+		board[row][col].printPiece(row, col);
+		break;
+	case Direction::Down: SetPosition(row + 1, col);
+		board[row][col].printPiece(row, col);
+		break;
+	case Direction::Left: SetPosition(row, col - 1);
+		board[row][col].printPiece(row, col);
+		break;
+	case Direction::Right: SetPosition(row, col + 1);
+		board[row][col].printPiece(row, col);
+		break;
+	default:
+		break;
+	}
+}
+
+
 int GameObject::getRow()
 {
 	_pos.getRow();

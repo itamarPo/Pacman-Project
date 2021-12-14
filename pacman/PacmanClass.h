@@ -1,9 +1,7 @@
 #pragma once
 #include <iostream>
-#include "GotoXY.h"
-#include "Position.h"
-#include "Game.h"
 #include "GameObject.h"
+
 const char Pacman_sign = '@';
 const char UP = 'w';
 const char UPW = 'W';
