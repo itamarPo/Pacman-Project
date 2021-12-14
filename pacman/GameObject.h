@@ -1,6 +1,5 @@
 #pragma once
 #include "Position.h"
-#include "GotoXY.h"
 #include "GameBoard.h"
 #include <vector>
 enum class Direction { Up, Down, Left, Right };
