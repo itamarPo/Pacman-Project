@@ -6,47 +6,72 @@ void GameObject::SetPosition(const int row, const int col)
 	_pos.SetCol(col);
 }
 
-bool GameObject::CheckWall(const int& row, const int& col, vector<vector<GameBoard>> board)
+bool GameObject::CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
 {
+	if (row == maxRow)
+		return true;
+	if (col == maxCol)
+		return true;
 	if (board[row][col].getSignpiece() == WALL)
 		return true;
 	return false;
 }
 
-bool GameObject::CheckTunnel(const int& row, const int& col, vector<vector<GameBoard>> board)
+bool GameObject::CheckTunnel(const int& row, const int& col ,const int& maxRow,const int& maxCol, vector<vector<GameBoard>> board)
 {
-	if (col == 29)
+	if (row == 0)
 	{
-		if (row == 0 || row == 19)
+		if (board[maxRow - 1][col].getSignpiece() != WALL)
 			return true;
+		else
+			return false;
 	}
-	else if (row == 10)
-		if (col == 0 || col == 59)
+	else if (row == (maxRow - 1))
+	{
+		if (board[0][col].getSignpiece() != WALL)
 			return true;
-	return false;
+		else
+			return false;
+	}
+	else if (col == 0)
+	{
+		if (board[row][maxCol - 1].getSignpiece() != WALL)
+			return true;
+		else
+			return false;
+	}
+	else if (col == (maxCol - 1))
+	{
+		if (board[row][0].getSignpiece() != WALL)
+			return true;
+		else
+			return false;
+	}
+	else
+		return false;
 }
 
-bool GameObject::Obstacle(const int& row, const int& col, vector<vector<GameBoard>> board, Direction direction)
+bool GameObject::Obstacle(const int& row, const int& col, const int& maxRow, const int& maxCol ,vector<vector<GameBoard>> board, Direction direction)
 {
 	switch (direction)
 	{
-	case Direction::Up : if (CheckWall(row - 1, col, board) || CheckTunnel(row - 1, col, board))
+	case Direction::Up : if (CheckWall(row - 1, col, maxRow, maxCol,board) || CheckTunnel(row - 1, col,maxRow, maxCol, board))
 		return true;
 		break;
-	case Direction::Down: if (CheckWall(row + 1, col, board) || CheckTunnel(row + 1, col, board))
+	case Direction::Down: if (CheckWall(row + 1, col, maxRow, maxCol, board) || CheckTunnel(row + 1, col, maxRow, maxCol, board))
 		return true;
 		break;
-	case Direction::Left: if (CheckWall(row, col - 1, board) || CheckTunnel(row, col - 1, board))
+	case Direction::Left: if (CheckWall(row, col - 1, maxRow, maxCol, board) || CheckTunnel(row, col - 1, maxRow, maxCol, board))
 		return true;
 		break;
-	case Direction::Right: if (CheckWall(row, col + 1, board) || CheckTunnel(row, col + 1, board))
+	case Direction::Right: if (CheckWall(row, col + 1, maxRow, maxCol, board) || CheckTunnel(row, col + 1, maxRow, maxCol, board))
 		return true;
 		break;
 	}
 	return false;
 }
 
-Direction GameObject::SetMove(vector<vector<GameBoard>> board)
+Direction GameObject::SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
 {
 	int random_move, row = _pos.getRow(), col = _pos.getCol();
 	while (true)
@@ -54,22 +79,22 @@ Direction GameObject::SetMove(vector<vector<GameBoard>> board)
 		random_move = rand() % 4;
 		switch (random_move)
 		{
-		case (int)Direction::Up: if (!Obstacle(row, col, board, Direction::Up))
+		case (int)Direction::Up: if (!Obstacle(row, col, maxRow, maxCol, board, Direction::Up))
 		{
 			return Direction::Up;
 		}
 				 break;
-		case (int)Direction::Down: if (!Obstacle(row, col, board, Direction::Down))
+		case (int)Direction::Down: if (!Obstacle(row, col, maxRow, maxCol, board, Direction::Down))
 		{
 			return Direction::Down;
 		}
 				   break;
-		case (int)Direction::Left: if (!Obstacle(row, col, board, Direction::Left))
+		case (int)Direction::Left: if (!Obstacle(row, col, maxRow, maxCol, board, Direction::Left))
 		{
 			return Direction::Left;
 		}
 				   break;
-		case (int)Direction::Right: if (!Obstacle(row, col, board, Direction::Right))
+		case (int)Direction::Right: if (!Obstacle(row, col, maxRow, maxCol, board, Direction::Right))
 		{
 			return Direction::Right;
 		}
@@ -105,13 +130,31 @@ void GameObject::Movement(vector<vector<GameBoard>> board)
 	}
 }
 
+void GameObject::setStartPosition(const int& row, const int& col)
+{
+	_pos.SetCol(col);
+	_pos.SetRow(row);
+	_startPos.SetCol(col);
+	_startPos.SetRow(row);
+}
 
-int GameObject::getRow()
+int GameObject::getStartRow() const
+{
+	return _startPos.getRow();
+}
+
+int GameObject::getStartCol() const
+{
+	return _startPos.getCol();
+}
+
+
+int GameObject::getRow() const
 {
 	return _pos.getRow();
 }
 
-int GameObject::getCol()
+int GameObject::getCol() const
 {
 	return _pos.getCol();
 }

@@ -7,6 +7,8 @@ Ghost::Ghost()
 	_pos.SetCol(0);
 	move_counter = 0;
 	direction = Direction(rand() % 4);
+	_startPos.SetRow(0);
+	_startPos.SetCol(0);
 }
 
 Ghost::~Ghost()
@@ -36,11 +38,11 @@ void Ghost::Print()const
 }
 
 
-void Ghost::UpdateMove(vector<vector<GameBoard>> board)
+void Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
 {
-	if (move_counter == 20 || Obstacle(_pos.getRow(), _pos.getCol(), board, direction))
+	if (move_counter == 20 || Obstacle(_pos.getRow(), _pos.getCol(), maxRow, maxCol, board, direction))
 	{
-		direction = SetMove(board);
+		direction = SetMove(maxRow, maxCol, board);
 		move_counter = 0;
 	}
 	
@@ -110,15 +112,6 @@ void Ghost::Movement(GameBoard board[][SizeCol])
 	}
 }
 */
-int Ghost::getGhostRow()
-{
-	return _pos.getRow();
-}
-
-int Ghost::getGhostCol()
-{
-	return _pos.getCol();
-}
 
 Direction Ghost::GetDirection()
 {

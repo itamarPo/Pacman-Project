@@ -4,6 +4,8 @@
 Game::Game()
 {
 	_numBread = 0;
+	maxRow = 0;
+	maxCol = 0;
 }
 
 Game::~Game()
@@ -30,28 +32,28 @@ bool Game::CheckTunnel(const int& row, const int& col, GameBoard board[][SizeCol
 			return true;
 	return false;
 }*/
-/*
-void Game::CheckImpact(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol])
+
+void Game::CheckImpact()
 {
 	int i;
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < ghosts.size(); i++)
 	{
-		if (pacman.getPacmanRow() == ghosts[i].getGhostRow())
-			if (pacman.getPacmanCol() == ghosts[i].getGhostCol())
+		if (pacman.getPacmanRow() == ghosts[i].getRow()) // check if ghosts[i] ate pacman
+			if (pacman.getPacmanCol() == ghosts[i].getCol())
 			{
 				pacman.setPacmanLives();
-				PrintLifeLost(pacman);
-				GhostInitialize(ghosts);
+				PrintLifeLost();
+				GhostInitialize();
 				pacman.ResetPos();
 				if (pacman.getPacmanLives() == 0)
 					return;
-				PrintBoard(board, pacman, ghosts);
+				PrintBoard();
 				return;
 			}
 	}
 	return;
 }
-*/
+
 
 void Game::Start()
 {
@@ -106,7 +108,7 @@ void Game::InitBoard(GameBoard board[][SizeCol])
 	File.close();
 }
 
-void Game::PrintBoard(int& maxRow, int& maxCol) const
+void Game::PrintBoard() const
 {
 	int row, col;
 	for(row=0; row <maxRow; row++)
@@ -193,36 +195,36 @@ void Game::Instructions(char& user_input)
 	} while (user_input != 27);
 }
 
-void Game::GameRun(int& maxRow, int& maxCol)
+void Game::GameRun()
 {
-	PrintBoard(maxRow, maxCol);
-//	char flush;
-//	char tmp_move = 0;
-//	bool is_ghost_turn = false;
-//	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
-//	{
-//		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
-//		{
-//			clrscr();
-//			PrintBoard(maxRow, maxCol);
-//		}
-//		if (_kbhit()) //if the user pressed any key
-//		{
-//			tmp_move = getKey(); //get char entered by user.
-//			if (IsMoveValid(tmp_move) == true) //check if its a vaild move for pacman.
-//			{
-//				if (tmp_move == PAUSE)
-//					continue;
-//				else
-//					pacman.setPacmanDirection(tmp_move);
-//			}
-//		}
+	PrintBoard();
+	char flush;
+	char tmp_move = 0;
+	bool is_ghost_turn = false;
+	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
+	{
+		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
+		{
+			clrscr();
+			PrintBoard();
+		}
+		if (_kbhit()) //if the user pressed any key
+		{
+			tmp_move = getKey(); //get char entered by user.
+			if (IsMoveValid(tmp_move) == true) //check if its a vaild move for pacman.
+			{
+				if (tmp_move == PAUSE)
+					continue;
+				else
+					pacman.setPacmanDirection(tmp_move);
+			}
+		}
 		
-//		ConsequencesOfMove(pacman, ghosts, board, is_ghost_turn);
-//		if (pacman.getPacmanLives() != 0)
-//			PrintScoreAndLives(pacman);
-//		Sleep(GameSpeed);
-//	}
+		ConsequencesOfMove(is_ghost_turn);
+		if (pacman.getPacmanLives() != 0)
+			PrintScoreAndLives();
+		Sleep(GameSpeed);
+	}
 //	clrscr();
 //	gotoxy(10, 20);
 //	/*
@@ -282,51 +284,54 @@ bool Game::IsMoveValid(const char& ch)
 }
 
 /*this function checks if pacman ate, hit a ghost, or got into a tunnel*/
-/*
-void Game::ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], bool& is_ghost_turn)
+
+void Game::ConsequencesOfMove(bool& is_ghost_turn)
 {
-	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol(); 
+	int pacRow = pacman.getPacmanRow(), pacCol = pacman.getPacmanCol(),i; 
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
-	PacmanCheck(pacman, board);
-	CheckImpact(pacman, ghosts, board);
+	PacmanCheck();
+	CheckImpact();
 	if (pacman.getPacmanLives() == 0)
 		return;
 	if (is_ghost_turn == true)// makes sure that ghosts move once in two pacman moves.
 	{
-		ghosts[0].UpdateMove(board); // updates the ghost's movements (if needed it changed direction)
-		ghosts[1].UpdateMove(board);
+		for (i = 0; i < ghosts.size(); i++) // updates the ghost's movements (if needed it changed direction)
+			ghosts[i].UpdateMove(maxRow, maxCol, board);
 		is_ghost_turn = false;
 	}
 	else
 		is_ghost_turn = true;
-	ghosts[0].Print();
-	ghosts[1].Print();
-	CheckImpact(pacman, ghosts, board);
+	for (i = 0; i < ghosts.size(); i++)
+		ghosts[i].Print();
+	
+	CheckImpact();
 	
 }
 
-void Game::PacmanCheck(Pacman& pacman, )
+void Game::PacmanCheck()
 {
-	if (pacman.CheckIfPacmanHitWall(board) == true)
+	if (pacman.CheckIfPacmanHitWall(maxRow, maxCol, board) == true) 
 	{
-		pacman.setPacmanDirection(STAY);
+		pacman.setPacmanDirection(STAY); // if wall, dont move pacman and put stay as direction
 	}
-	pacman.setPacmanPosition();
-	//CheckIfPacmanAteFood(pacman, board);
-	CheckTunnel(pacman, board);
-	pacman.printPacman();
-	CheckIfPacmanAteFood(pacman, board);
+	pacman.setPacmanPosition(); // set new position due to direction
+	CheckIfPacmanAteFood();
+	if (pacman.CheckTunnel(maxRow, maxCol, board) == true) //to do = itay
+	{
+		CheckIfPacmanAteFood(); //check if tunnel exit has food 
+	}
+	pacman.printPacman(); // print pacman at his new position
 }
 
-void Game::CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol])
+void Game::CheckIfPacmanAteFood()
 {
 	if (board[pacman.getPacmanRow()][pacman.getPacmanCol()].getSignpiece() == FOOD)
 	{
 		pacman.setPacmanScore();
 		_numBread--;
-		board[pacman.getPacmanRow()][pacman.getPacmanCol()].setGamePiece(' ');
+		board[pacman.getPacmanRow()][pacman.getPacmanCol()].setGamePiece(Space);
 	}
-}*/
+}
 
 void Game::PrintScoreAndLives() const
 {
@@ -355,18 +360,18 @@ void Game::PrintScoreAndLives() const
 	}
 }
 
-/*
-void Game::GhostInitialize(Ghost* ghosts)
+
+void Game::GhostInitialize()
 {
 	int i;
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < ghosts.size(); i++)
 	{
-		ghosts[i].SetPosition(StartGhostRow + i * 10, StartGhostCol);
+		ghosts[i].SetPosition(ghosts[i].getStartRow(),ghosts[i].getStartCol());
 	}
-}*/
+}
 
-/*
-void Game::PrintLifeLost(Pacman& pacman)
+
+void Game::PrintLifeLost() const
 {
 	clrscr();
 	
@@ -380,7 +385,7 @@ void Game::PrintLifeLost(Pacman& pacman)
 	}
 	clrscr();
 }
-*/
+
 
 /*
 void Game::CheckTunnel(Pacman& pacman, GameBoard[][SizeCol])
@@ -429,10 +434,10 @@ void Game::turnColor()
 }
 
 /*
-void Game::checkImpact(Ghost* ghosts, Fruit& fruit, GameBoard[][SizeCol])
+void Game::CheckGhostFruitImpact()
 {
 	int i;
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < ghosts.size(); i++)
 	{
 		if (fruit.getRow() == ghosts[i].getGhostRow())
 			if (fruit.getCol() == ghosts[i].getGhostCol())
@@ -475,7 +480,7 @@ void Game::RegularGame()
 	int size = GameFiles.size(), i,maxRow = 0, maxCol = 0;
 	for (i = 0 ; i < size ; i++)
 	{
-		getBoardInformation(i, maxRow, maxCol);
+		getBoardInformation(i);
 		//gamerun
 		if (pacman.getPacmanLives() == 0)
 		{
@@ -490,15 +495,15 @@ void Game::RegularGame()
 void Game::SpecificFileCycle()
 {
 	string file_name;
-	int fileIndex, maxRow = 0, maxCol = 0;
+	int fileIndex;
 	cout << "Please enter the file's name you wish to play" << endl;
 	cin >> file_name;
 
 	if (binary_search(GameFiles.begin(), GameFiles.end(), file_name))
 	{
 		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
-		getBoardInformation(fileIndex, maxRow, maxCol);
-		GameRun(maxRow, maxCol); //tomorrow
+		getBoardInformation(fileIndex);
+		GameRun(); //tomorrow
 	}
 	else
 	{
@@ -537,12 +542,12 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 	}
 	switch (ch)
 	{
-	case Pacman_sign: pacman.setPacmanStartPosition(row, col);
+	case Pacman_sign: pacman.setStartPosition(row, col);
 		board[row][col].setGamePiece(Space);
 		break;
 	case Ghost_sign:
 		ghosts.push_back(ghost);
-		ghosts[ghosts.size() - 1].SetPosition(row, col);
+		ghosts[ghosts.size() - 1].setStartPosition(row, col);
 		board[row][col].setGamePiece(FOOD);
 		_numBread++;
 		break;
@@ -560,7 +565,7 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 }
 
 /*maxrow and maxcol are used for tunnels*/
-void Game::getBoardInformation(int fileIndex, int& maxRow, int& maxCol)
+void Game::getBoardInformation(int fileIndex)
 {
 	ifstream File;
 	vector<GameBoard> boardLine;

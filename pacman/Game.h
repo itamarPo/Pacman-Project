@@ -28,34 +28,36 @@ private:
 	Position _legend;
 	vector<string> GameFiles;
 	int _numBread;
+	int maxRow;
+	int maxCol;
 public:
 	Game();
 	~Game();
 	/*static bool CheckWall(const int& x, const int& y, GameBoard board[][SizeCol]);
 	static bool CheckTunnel(const int& x, const int& y, GameBoard board[][SizeCol]);*/
-	/*void CheckImpact(Pacman& pacman,Ghost* ghosts, GameBoard board[][SizeCol]);*/
+	void CheckImpact();
 	void Start();
 	void GameCycle();
 	void InitBoard(GameBoard board[][SizeCol]);
-	void PrintBoard(int& maxRow, int& maxCol) const;
+	void PrintBoard() const;
 	void Menu();
 	void PrintMenu() const;
 	void Instructions(char& user_input);
-	void GameRun(int& maxRow, int& maxCol);
+	void GameRun();
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
-	//void ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], bool& is_ghost_turn);
-	//void PacmanCheck();
-	//void CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol]);
+	void ConsequencesOfMove(bool& is_ghost_turn);
+	void PacmanCheck();
+	void CheckIfPacmanAteFood();
 	void PrintScoreAndLives()const;
-	//void GhostInitialize(Ghost* ghosts);
-	//void PrintLifeLost(Pacman& pacman); 
+	void GhostInitialize();
+	void PrintLifeLost() const; 
 	//void CheckTunnel(Pacman& pacman, GameBoard[][SizeCol]);
 	void turnColor();
-	//void checkImpact(Ghost* ghosts, Fruit& frut, GameBoard[][SizeCol]);
+	//void CheckGhostFruitImpact();
 	void getGameFiles();
 	void checkFileNameFormat();
-	void getBoardInformation(int fileIndex, int& maxRow, int& maxCol);
+	void getBoardInformation(int fileIndex);
 	void ClearGame();
 	//void createLegendRectangle();
 	void RegularGame();

@@ -23,7 +23,6 @@ class Pacman : public GameObject
 {
 private:
 	Position _pos;
-	Position _startPos;
 	int _score;
 	int _remaininglives;
 	char _direction;
@@ -38,13 +37,14 @@ public:
 	void setPacmanDirection(const char& direction);
 	void setPacmanIfTunnel(const int row, const int col);
 	void printPacman() const; 
-	int getPacmanRow();
-	int getPacmanCol();
+	int getPacmanRow()const;
+	int getPacmanCol()const;
 	int getPacmanScore() const;
 	int getPacmanLives() const;
 	void ResetPos();
 	char getPacmanDirection()const;
-	bool CheckIfPacmanHitWall(vector<vector<GameBoard>> board); // add parameters
+	bool CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board);
+	virtual bool CheckTunnel(const int& maxRow,const int& maxCol, vector<vector<GameBoard>> board);
 
 
 };

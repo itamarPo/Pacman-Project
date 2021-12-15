@@ -16,19 +16,15 @@ public:
 
 
 	void SetPosition(const int row, const int col);
-
-	int getGhostRow();
-	int getGhostCol();
 	Direction GetDirection();
 
 	void Print()const;
-	void UpdateMove(vector<vector<GameBoard>> board);
+	void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board);
 	//GhostDirection SetMove(GameBoard board[][SizeCol]);
 	//void Movement(vector<vector<GameBoard>> board);
 	//bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
 
 private:
-	Position _pos;
 	int move_counter;
 	Direction direction;
 };
