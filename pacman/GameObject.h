@@ -2,13 +2,13 @@
 #include "Position.h"
 #include "GameBoard.h"
 #include <vector>
-enum class Direction { Up, Down, Left, Right };
+enum class Direction { Up, Down, Left, Right, Stay };
 class GameObject 
 {
 protected:
 	Position _pos;
 	Position _startPos;
-	Direction _direction = Direction::Left;
+	Direction direction = Direction::Stay;
 public:
 	void SetPosition(const int row, const int col);
 

@@ -8,9 +8,9 @@ void GameObject::SetPosition(const int row, const int col)
 
 bool GameObject::CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
 {
-	if (row == maxRow)
+	if (row == maxRow || row == -1)
 		return true;
-	if (col == maxCol)
+	if (col == maxCol || col == -1)
 		return true;
 	if (board[row][col].getSignpiece() == WALL)
 		return true;
@@ -111,18 +111,18 @@ void GameObject::Movement(vector<vector<GameBoard>> board)
 {
 	int row = _pos.getRow(), col = _pos.getCol();
 
-	switch (_direction)
+	switch ((int)direction)
 	{
-	case Direction::Up: SetPosition(row - 1, col);
+	case (int)Direction::Up: SetPosition(row - 1, col);
 		board[row][col].printPiece(row, col);
 		break;
-	case Direction::Down: SetPosition(row + 1, col);
+	case (int)Direction::Down: SetPosition(row + 1, col);
 		board[row][col].printPiece(row, col);
 		break;
-	case Direction::Left: SetPosition(row, col - 1);
+	case (int)Direction::Left: SetPosition(row, col - 1);
 		board[row][col].printPiece(row, col);
 		break;
-	case Direction::Right: SetPosition(row, col + 1);
+	case (int)Direction::Right: SetPosition(row, col + 1);
 		board[row][col].printPiece(row, col);
 		break;
 	default:

@@ -5,8 +5,8 @@ Fruit::Fruit()
 	_scoreNum = 5 + rand() % 4;
 	_appear = false;
 	_moves = 0;
-	_movesAppear = 0;
-	_direction = (Direction)(rand() % 4);
+	_movesAppear = 1;
+	direction = (Direction)(rand() % 4);
 }
 
 void Fruit::setStartPos(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
@@ -14,8 +14,8 @@ void Fruit::setStartPos(const int& maxRow, const int& maxCol, vector<vector<Game
 	int row=0, col=0;
 	do
 	{
-		row = rand() % 20;
-		col = rand() % 60;
+		row = rand() % maxRow;
+		col = rand() % maxCol;
 	} while (CheckWall(row, col, maxRow, maxCol, board) || CheckTunnel(row, col, maxRow, maxCol, board)); // need to check if a fruit can be spawned on ghost or pacman
 	_pos.SetRow(row);
 	_pos.SetCol(col);
@@ -43,12 +43,14 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 			_moves = 0;
 			setAppear();
 			setMovesAppear();
+			board[_pos.getRow()][_pos.getCol()].printPiece(_pos.getRow(), _pos.getCol());
+			return;
 		}
 		else
 		{
-			if (Obstacle(_pos.getRow(),_pos.getCol(),maxRow, maxCol, board, _direction))
+			if (Obstacle(_pos.getRow(),_pos.getCol(),maxRow, maxCol, board, direction))
 			{
-				_direction = SetMove(maxRow, maxCol, board);
+				direction = SetMove(maxRow, maxCol, board);
 			}
 			Movement(board);
 		}
@@ -59,10 +61,11 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 	{
 		if (_moves == _movesAppear)
 		{
+			setStartPos(maxRow, maxCol, board);
 			setAppear();
 			setScore();
 			_moves = 0;
-			_direction = SetMove(maxRow, maxCol, board);
+			direction = SetMove(maxRow, maxCol, board);
 		}
 		
 	}

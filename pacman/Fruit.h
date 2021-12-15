@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 
-const int MovesDisappear = 6;
+const int MovesDisappear = 3;
 //enum class Direction { Up_F, Down_F, Left_F, Right_F };
 class Fruit : public GameObject
 {
@@ -23,6 +23,5 @@ private:
     int _scoreNum;
     int _moves;
     int _movesAppear;
-    Direction _direction;
 };
 

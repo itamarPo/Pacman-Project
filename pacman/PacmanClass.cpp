@@ -62,7 +62,7 @@ void Pacman::printPacman() const
 	else
 		cout << "@";
 }
-
+/*
 int Pacman::getPacmanRow() const 
 {
 	return _pos.getRow();
@@ -72,7 +72,7 @@ int Pacman::getPacmanCol() const
 {
 	return _pos.getCol();
 }
-
+*/
 int Pacman::getPacmanScore() const
 {
 	return _score;
@@ -119,41 +119,41 @@ bool Pacman::CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<v
 
 bool Pacman::CheckTunnel(const int& maxRow,const int& maxCol, vector<vector<GameBoard>> board)
 {
-	if (_pos.getRow() == 0)
+	if (_pos.getRow() == 0 && _direction == UP)
 	{
 		if (board[maxRow - 1][_pos.getCol()].getSignpiece() != WALL)
 		{
-			setPacmanIfTunnel(maxRow - 2, _pos.getCol());
+			setPacmanIfTunnel(maxRow - 1, _pos.getCol());
 			return true;
 		}
 		else
 			return false;
 	}
-	else if (_pos.getRow() == (maxRow - 1))
+	else if (_pos.getRow() == (maxRow - 1) && _direction == DOWN)
 	{
 		if (board[0][_pos.getCol()].getSignpiece() != WALL)
 		{
-			setPacmanIfTunnel(1, _pos.getCol());
+			setPacmanIfTunnel(0, _pos.getCol());
 			return true;
 		}
 		else
 			return false;
 	}
-	else if (_pos.getCol() == 0)
+	else if (_pos.getCol() == 0 && _direction == LEFT)
 	{
 		if (board[_pos.getRow()][maxCol - 1].getSignpiece() != WALL)
 		{
-			setPacmanIfTunnel(_pos.getRow(), maxCol - 2);
+			setPacmanIfTunnel(_pos.getRow(), maxCol - 1);
 			return true;
 		}
 		else
 			return false;
 	}
-	else if (_pos.getCol() == (maxCol - 1))
+	else if (_pos.getCol() == (maxCol - 1) && _direction == RIGHT)
 	{
 		if (board[_pos.getRow()][0].getSignpiece() != WALL)
 		{
-			setPacmanIfTunnel(_pos.getRow(), 1);
+			setPacmanIfTunnel(_pos.getRow(), 0);
 			return true;
 		}
 		else

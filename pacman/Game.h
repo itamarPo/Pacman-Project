@@ -19,6 +19,7 @@ const char EmptyPos = '%';
 const char Space = ' ';
 const int SizeToCheck = 6;
 
+
 class Game
 {
 private: 
@@ -27,18 +28,15 @@ private:
 	vector<Ghost> ghosts;
 	Position _legend;
 	vector<string> GameFiles;
+	Fruit fruit;
 	int _numBread;
 	int maxRow;
 	int maxCol;
 public:
 	Game();
 	~Game();
-	/*static bool CheckWall(const int& x, const int& y, GameBoard board[][SizeCol]);
-	static bool CheckTunnel(const int& x, const int& y, GameBoard board[][SizeCol]);*/
 	void CheckImpact();
 	void Start();
-	void GameCycle();
-	void InitBoard(GameBoard board[][SizeCol]);
 	void PrintBoard() const;
 	void Menu();
 	void PrintMenu() const;
@@ -52,16 +50,17 @@ public:
 	void PrintScoreAndLives()const;
 	void GhostInitialize();
 	void PrintLifeLost() const; 
-	//void CheckTunnel(Pacman& pacman, GameBoard[][SizeCol]);
 	void turnColor();
 	//void CheckGhostFruitImpact();
 	void getGameFiles();
 	void checkFileNameFormat();
 	void getBoardInformation(int fileIndex);
 	void ClearGame();
-	//void createLegendRectangle();
 	void RegularGame();
 	void SpecificFileCycle();
 	void ClearLevel();
 	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, Ghost& ghost);
+	void EndGameMessage() const;
+	void WinGameMessage() const;
+	void WaitMessage()const;
 };

@@ -26,6 +26,5 @@ public:
 
 private:
 	int move_counter;
-	Direction direction;
 };
 
