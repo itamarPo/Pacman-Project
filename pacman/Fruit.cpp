@@ -38,7 +38,7 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 	_moves++;
 	if (_appear)
 	{
-		if (_moves == MovesDisappear)
+		if (_moves >= MovesDisappear)
 		{
 			_moves = 0;
 			setAppear();
@@ -59,7 +59,7 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 	}
 	else
 	{
-		if (_moves == _movesAppear)
+		if (_moves >= _movesAppear)
 		{
 			setStartPos(maxRow, maxCol, board);
 			setAppear();
@@ -76,12 +76,25 @@ void Fruit::setMovesAppear()
 	_movesAppear = 4 + rand() % 6;
 }
 
+void Fruit::Eaten()
+{
+	_moves = 0;
+	_appear = false;
+	setMovesAppear();
+
+}
+
 
 
 
 bool Fruit::checkAppear() const
 {
 	return _appear;
+}
+
+int Fruit::getScore() const
+{
+	return _scoreNum;
 }
 
 void Fruit::Print() const

@@ -226,6 +226,7 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn)
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
 	PacmanCheck();
 	CheckImpact();
+
 	if (pacman.getPacmanLives() == 0)
 		return;
 	if (is_ghost_turn == true)// makes sure that ghosts move once in two pacman moves.
@@ -234,12 +235,12 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn)
 		for (i = 0; i < ghosts.size(); i++) // updates the ghost's movements (if needed it changes direction)
 			ghosts[i].UpdateMove(maxRow, maxCol, board);
 		is_ghost_turn = false;
+		CheckGhostFruitImpact();
 	}
 	else
 		is_ghost_turn = true;
 	for (i = 0; i < ghosts.size(); i++)
 		ghosts[i].Print();
-	
 	CheckImpact();
 	
 }
@@ -265,6 +266,18 @@ void Game::CheckIfPacmanAteFood()
 		pacman.setPacmanScore();
 		_numBread--;
 		board[pacman.getRow()][pacman.getCol()].setGamePiece(Space);
+	}
+	if (fruit.checkAppear())
+	{
+		if (pacman.getRow() == fruit.getRow())
+			if (pacman.getCol() == fruit.getCol())
+			{
+				pacman.setPacmanScore(fruit.getScore());
+				fruit.Eaten();
+				gotoxy(50, 10);
+				cout << "                         ";
+				cout << "Fruit was eaten by pacman";
+			}
 	}
 }
 
@@ -336,7 +349,7 @@ void Game::turnColor()
 	clrscr();
 }
 
-/*
+
 void Game::CheckGhostFruitImpact()
 {
 	int i;
@@ -345,13 +358,14 @@ void Game::CheckGhostFruitImpact()
 		if (fruit.getRow() == ghosts[i].getRow())
 			if (fruit.getCol() == ghosts[i].getCol())
 			{
-				fruit.setAppear();
+				fruit.Eaten();
+				cout << "                         ";
+				cout << "Fruit was eaten by ghost";
 				return;
 			}
 	}
-	return;
 }
-*/
+
 void Game::getGameFiles()
 {
 	string path = "./";
