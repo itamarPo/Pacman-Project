@@ -15,7 +15,7 @@ public:
 	bool CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board);
 	virtual bool CheckTunnel(const int& row, const int& col, const int& maxRow,const int& maxCol, vector<vector<GameBoard>> board);
 	bool Obstacle(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, Direction direction);
-	Direction SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board);
+	virtual Direction SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, );
 	void Movement(vector<vector<GameBoard>> board);
 	void setStartPosition(const int& row, const int& col);
 	

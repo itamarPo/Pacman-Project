@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-
+#include "PacmanClass.h"
 
 using namespace std;
 const int StartGhostRow = 7;
@@ -14,12 +14,12 @@ public:
 	Ghost();
 	~Ghost();
 
-
 	void SetPosition(const int row, const int col);
 	Direction GetDirection();
 
 	void Print()const;
 	void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board);
+	virtual Direction SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, Pacman &pacman);
 	//GhostDirection SetMove(GameBoard board[][SizeCol]);
 	//void Movement(vector<vector<GameBoard>> board);
 	//bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
@@ -28,3 +28,9 @@ private:
 	int move_counter;
 };
 
+class Qitem
+{
+public:
+	Position pos;
+	Direction direction;
+}

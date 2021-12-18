@@ -136,7 +136,7 @@ void Game::GameRun()
 	char flush;
 	char tmp_move = 0;
 	bool is_ghost_turn = false;
-	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
+	while (pacman.getPacmanLives() != 0 && _numBread != 0)
 	{
 		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
 		{
@@ -242,15 +242,14 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn)
 	for (i = 0; i < ghosts.size(); i++)
 		ghosts[i].Print();
 	CheckImpact();
-	
+	CheckIfPacmanAteFood();
 }
 
 void Game::PacmanCheck()
 {
 	if (pacman.CheckIfPacmanHitWall(maxRow, maxCol, board) == true) 
 	{
-	//check tunnel
-		if(pacman.CheckTunnel(maxRow, maxCol, board) != true)
+		if(pacman.CheckTunnel(maxRow, maxCol, board) != true) // if tunnel, move pacman to the other side
 		pacman.setPacmanDirection(STAY); // if wall, dont move pacman and put stay as direction
 	}
 	else
@@ -267,7 +266,7 @@ void Game::CheckIfPacmanAteFood()
 		_numBread--;
 		board[pacman.getRow()][pacman.getCol()].setGamePiece(Space);
 	}
-	if (fruit.checkAppear())
+	if (fruit.checkAppear()) 
 	{
 		if (pacman.getRow() == fruit.getRow())
 			if (pacman.getCol() == fruit.getCol())
@@ -355,14 +354,15 @@ void Game::CheckGhostFruitImpact()
 	int i;
 	for (i = 0; i < ghosts.size(); i++)
 	{
-		if (fruit.getRow() == ghosts[i].getRow())
-			if (fruit.getCol() == ghosts[i].getCol())
-			{
-				fruit.Eaten();
-				cout << "                         ";
-				cout << "Fruit was eaten by ghost";
-				return;
-			}
+		if(fruit.checkAppear())
+			if (fruit.getRow() == ghosts[i].getRow())
+				if (fruit.getCol() == ghosts[i].getCol())
+				{
+					fruit.Eaten();
+					cout << "                         ";
+					cout << "Fruit was eaten by ghost";
+					return;
+				}
 	}
 }
 

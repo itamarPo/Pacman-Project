@@ -23,7 +23,7 @@ const int SizeToCheck = 6;
 class Game
 {
 private: 
-	vector<vector<GameBoard>> board;
+	vector<vector<GameBoard>> board; //levelofghost* 
 	Pacman pacman;
 	vector<Ghost> ghosts;
 	Position _legend;
