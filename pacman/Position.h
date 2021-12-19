@@ -7,6 +7,7 @@ class Position
 {
 public:
 	Position();
+	Position(const Position& pos);
 	~Position();
 
 	void SetRow(const int& x);

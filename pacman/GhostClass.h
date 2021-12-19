@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "PacmanClass.h"
+#include <queue>
 
 using namespace std;
 const int StartGhostRow = 7;
@@ -33,6 +34,11 @@ private:
 class Qitem
 {
 public:
-	Position pos;
-	Direction direction;
+	Position _pos;
+	Direction _direction;
+	Qitem(Position& pos, Direction dir) : _pos(pos)
+	{
+		_direction = dir;
+	}
+
 };
