@@ -38,13 +38,14 @@ void Ghost::Print()const
 }
 
 
-void Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, Pacman & pacman)
+void Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
 {
 	if (move_counter == 20 || Obstacle(_pos.getRow(), _pos.getCol(), maxRow, maxCol, board, direction))
 	{
 		direction = SetMove(maxRow, maxCol, board);
 		move_counter = 0;
 	}
+	
 	Movement(board);
 	move_counter++;
 }
