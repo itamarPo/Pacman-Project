@@ -37,7 +37,10 @@ void Game::CheckImpact()
 
 void Game::Start()
 {
-	getGameFiles();
+	bool filesFound = true;
+	getGameFiles(filesFound);
+	if (!filesFound)
+		return;
 	Menu();
 }
 
@@ -181,17 +184,17 @@ void Game::GameRun()
 	}
 	clrscr();
 	gotoxy(10, 20);
-	
+	/*
 	if (pacman.getPacmanLives() == 0)
 		cout << "Game Over!";
 	else
 		cout << "Congratulations, you won!!";
 	Sleep(GameOverWon);
 	clrscr();
-	cout << "Press any key to return to the menu";
-	while (!_kbhit());
+	cout << "Press any key to return to the menu";*/
+	/*while (!_kbhit());
 	flush = _getch();
-	clrscr();
+	clrscr();*/
 	
 }
 
@@ -252,7 +255,7 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn)
 	{
 		fruit.updateStatus(maxRow, maxCol, board);
 		for (i = 0; i < ghosts.size(); i++) // updates the ghost's movements (if needed it changes direction)
-			ghosts[i]->UpdateMove(maxRow, maxCol, board);
+			ghosts[i]->UpdateMove(maxRow, maxCol, board, pacman);
 		is_ghost_turn = false;
 		CheckGhostFruitImpact();
 	}
@@ -292,9 +295,6 @@ void Game::CheckIfPacmanAteFood()
 			{
 				pacman.setPacmanScore(fruit.getScore());
 				fruit.Eaten();
-				gotoxy(50, 10);
-				cout << "                         ";
-				cout << "Fruit was eaten by pacman";
 			}
 	}
 }
@@ -378,20 +378,23 @@ void Game::CheckGhostFruitImpact()
 				if (fruit.getCol() == ghosts[i]->getCol())
 				{
 					fruit.Eaten();
-					cout << "                         ";
-					cout << "Fruit was eaten by ghost";
 					return;
 				}
 	}
 }
 
-void Game::getGameFiles()
+void Game::getGameFiles(bool& filesFound)
 {
 	string path = "./";
 	for (const auto& file : directory_iterator(path))
 	{
 		GameFiles.push_back(file.path().filename().string()); // Add file's name to vector.
 		checkFileNameFormat(); //check if file format is ok
+	}
+	if (GameFiles.size() == 0)
+	{
+		cout << "No files were found, Good bye.";
+		filesFound = false;
 	}
 }
 
@@ -413,7 +416,7 @@ void Game::checkFileNameFormat()
 
 void Game::RegularGame(int & GhostLevel)
 {
-	int size = GameFiles.size(), i,maxRow = 0, maxCol = 0;
+	int size = GameFiles.size(), i,j,maxRow = 0, maxCol = 0;
 	for (i = 0 ; i < size ; i++)
 	{
 		getBoardInformation(i, GhostLevel);
@@ -425,9 +428,21 @@ void Game::RegularGame(int & GhostLevel)
 			return;
 		}
 		else
+		{
 			ClearLevel();
+			clrscr();
+			gotoxy(0, 0);
+			cout << "Level Cleared. Next Level in: " << endl;
+			for (j = 3; j > 0; j--)
+			{
+				gotoxy(1, 0);
+				cout << j;
+				Sleep(1000);
+			}
+		}
 	}
-	EndGameMessage();
+	WinGameMessage();
+	ClearGame();
 }
 
 void Game::SpecificFileCycle(int & GhostLevel)
@@ -442,6 +457,11 @@ void Game::SpecificFileCycle(int & GhostLevel)
 		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
 		getBoardInformation(fileIndex, GhostLevel);
 		GameRun(); //tomorrow
+		if (pacman.getPacmanLives() == 0)
+			EndGameMessage();
+		else
+			WinGameMessage();
+		ClearGame();
 	}
 	else
 	{
@@ -464,24 +484,10 @@ void Game::ClearLevel()
 	_numBread = 0;
 	maxRow = 0;
 	maxCol = 0;
-	clrscr();
-	gotoxy(0, 0);
-	cout << "Level Cleared. Next Level in: " << endl;
-	for (i = 3; i > 0; i--)
-	{
-		gotoxy(1, 0);
-		cout << i;
-		Sleep(1000);
-	}
 }
 
 void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel)
 {
-	//ghosts.push_back(new Good_Ghost);
-	//ghosts.push_back(new Ghost);
-	//ghosts[0]->hello(); 
-	//ghosts[1]->hello();
-	//ghoste[0] = new Good_Ghost;
 	if (legend_appear)
 	{
 		if (_legend.getRow() <= row && row <= _legend.getRow() + 2)
@@ -596,8 +602,8 @@ void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 void Game::ClearGame()
 {
 	ClearLevel();
-	pacman.setPacmanScore(StartScore);
-	pacman.setPacmanLives(StartLives);
+	pacman.resetPacmanScore(StartScore);
+	pacman.resetPacmanLives(StartLives);
 	pacman.setPacmanDirection(STAY);
 }
  

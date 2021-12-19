@@ -24,10 +24,10 @@ class Pacman : public GameObject
 private:
 	int _score;
 	int _remaininglives;
-	char _direction;
+	//char _direction;
 
 public:
-	Pacman(const int row = 0, const int col = 0, const int score = StartScore, const int Lives = StartLives, const char direction = STAY);
+	Pacman(const int row = 0, const int col = 0, const int score = StartScore, const int Lives = StartLives, const Direction _direction = Direction::Stay);
 	~Pacman();
 	void setPacmanPosition();
 	//void setPacmanStartPosition(const int& row, const int& col);
@@ -35,13 +35,15 @@ public:
 	void setPacmanLives(int minus = 1);
 	void setPacmanDirection(const char& direction);
 	void setPacmanIfTunnel(const int row, const int col);
+	void resetPacmanScore(const int& StartScore);
+	void resetPacmanLives(const int& StartLives);
 	void printPacman() const; 
 	//int getPacmanRow()const;
 	//int getPacmanCol()const;
 	int getPacmanScore() const;
 	int getPacmanLives() const;
 	void ResetPos();
-	char getPacmanDirection()const;
+	Direction getPacmanDirection()const;
 	bool CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board);
 	virtual bool CheckTunnel(const int& maxRow,const int& maxCol, vector<vector<GameBoard>> board);
 

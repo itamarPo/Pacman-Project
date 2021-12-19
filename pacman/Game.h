@@ -56,7 +56,7 @@ public:
 	void PrintLifeLost() const; 
 	void turnColor();
 	void CheckGhostFruitImpact();
-	void getGameFiles();
+	void getGameFiles(bool& filesFound);
 	void checkFileNameFormat();
 	void getBoardInformation(int fileIndex, int & GhostLevel);
 	void ClearGame();

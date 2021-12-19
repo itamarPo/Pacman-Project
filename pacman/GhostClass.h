@@ -9,6 +9,22 @@ const int StartGhostCol = 54;
 //enum GhostDirection{Up_G, Down_G, Left_G, Right_G};
 const char Ghost_sign = '$';
 extern bool Color;
+
+class Qitem
+{
+public:
+	int _row;
+	int _col;
+	Direction _direction;
+	Qitem(const int & row,const int& col, Direction dir) 
+	{
+		_row = row;
+		_col = col;
+		_direction = dir;
+	}
+
+};
+
 class Ghost : public GameObject
 {
 public:
@@ -19,26 +35,15 @@ public:
 	Direction GetDirection();
 
 	void Print()const;
-	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board , Pacman & pacman);
-	virtual Direction SmartMove(const int& maxRow, const int& maxCol,Pacman &pacman, vector<vector<GameBoard>> board) = 0;
+	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, Pacman& pacman);
+	Direction SmartMove(const int& maxRow, const int& maxCol,Pacman &pacman, vector<vector<GameBoard>> board);
 	
 	//GhostDirection SetMove(GameBoard board[][SizeCol]);
 	//void Movement(vector<vector<GameBoard>> board);
 	//bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
-	
 
-private:
+
+protected:
 	int move_counter;
 };
 
-class Qitem
-{
-public:
-	Position _pos;
-	Direction _direction;
-	Qitem(Position& pos, Direction dir) : _pos(pos)
-	{
-		_direction = dir;
-	}
-
-};

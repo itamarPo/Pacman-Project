@@ -49,6 +49,105 @@ void Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameB
 	move_counter++;
 }
 
+Direction Ghost::SmartMove(const int& maxRow, const int& maxCol, Pacman& pacman, vector<vector<GameBoard>> board)
+{
+	//BFS
+	
+	bool visited[25][80];
+	Qitem ghost(_pos.getRow(), _pos.getCol(), Direction::Stay);
+	int i, j;
+	for (i = 0 ; i < maxRow ; i++)
+		for(j = 0 ; j < maxCol ; j++)
+		{
+			if (board[i][j].getSignpiece() == WALL)
+				visited[i][j] = true;
+			else
+				visited[i][j] = false;
+		}
+	queue<Qitem> q;
+	q.push(ghost);
+	visited[ghost._row][ghost._col] = true;
+	bool IsFirst = true;
+	int sum = 0;
+	Qitem p = q.front();
+	while (!q.empty())
+	{
+		p = q.front();
+		q.pop();
+
+		// Destination found;
+		if (pacman.getRow() == p._row)
+			if(pacman.getCol() == p._col)
+			return p._direction;
+
+		// moving up
+		if ((p._row - 1 >= 0) && (visited[p._row - 1][p._col] == false))
+		{
+			if (IsFirst == true)
+			{
+				q.push(Qitem(p._row - 1, p._col, Direction::Up)); //assigning up
+			}
+			else
+			{
+				q.push(Qitem(p._row - 1, p._col, p._direction));
+			}
+			visited[p._row - 1][p._col] = true;
+		}
+
+		// moving down
+		if ((p._row + 1 < maxRow) && (visited[p._row + 1][p._col] == false))
+		{
+			if (IsFirst == true)
+			{
+				q.push(Qitem(p._row + 1, p._col, Direction::Down)); //assigning down
+			}
+			else
+			{
+				q.push(Qitem(p._row + 1, p._col, p._direction));
+			}
+			visited[p._row + 1][p._col] = true;
+		}
+
+		// moving left
+		if ((p._col - 1 >= 0) && (visited[p._row][p._col - 1] == false))
+		{
+			if (IsFirst == true)
+			{
+				q.push(Qitem(p._row, p._col - 1, Direction::Left)); //assigning left
+				
+			}
+			else
+			{
+				q.push(Qitem(p._row, p._col - 1, p._direction));
+			}
+			visited[p._row][p._col - 1] = true;
+		}
+
+		// moving right
+		if ((p._col + 1 < maxCol) && (visited[p._row][p._col + 1] == false))
+		{
+			if (IsFirst == true)
+			{
+				q.push(Qitem(p._row, p._col + 1, Direction::Right)); //assigning right
+				
+			}
+			else
+			{
+				q.push(Qitem(p._row, p._col + 1, p._direction));
+			}
+			visited[p._row][p._col + 1] = true;
+		}
+		if (IsFirst == true)
+			IsFirst = false;
+
+		sum++;
+	}
+	return Direction::Up;
+}
+
+	
+
+
 /*
 GhostDirection Ghost::SetMove(GameBoard board[][SizeCol])
 {
