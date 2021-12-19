@@ -18,11 +18,13 @@ public:
 	Direction GetDirection();
 
 	void Print()const;
-	void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board);
-	virtual Direction SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, Pacman &pacman);
+	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board , Pacman & pacman);
+	virtual Direction SmartMove(const int& maxRow, const int& maxCol,Pacman &pacman, vector<vector<GameBoard>> board) = 0;
+	
 	//GhostDirection SetMove(GameBoard board[][SizeCol]);
 	//void Movement(vector<vector<GameBoard>> board);
 	//bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
+	
 
 private:
 	int move_counter;
@@ -33,4 +35,4 @@ class Qitem
 public:
 	Position pos;
 	Direction direction;
-}
+};
