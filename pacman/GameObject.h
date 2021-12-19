@@ -19,6 +19,7 @@ public:
 	void Movement(vector<vector<GameBoard>> board);
 	void setStartPosition(const int& row, const int& col);
 	
+	
 	int getStartRow() const;
 	int getStartCol() const;
 	int getRow() const;

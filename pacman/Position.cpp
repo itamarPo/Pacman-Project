@@ -6,6 +6,12 @@ Position::Position()
 	_col = 0;
 }
 
+Position::Position(const Position& pos)
+{
+	_row = pos._row;
+	_col = pos._col;
+}
+
 Position::~Position()
 {
 }
