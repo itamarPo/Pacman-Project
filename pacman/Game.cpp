@@ -18,8 +18,8 @@ void Game::CheckImpact()
 	int i;
 	for (i = 0; i < ghosts.size(); i++)
 	{
-		if (pacman.getRow() == ghosts[i].getRow()) // check if ghosts[i] ate pacman
-			if (pacman.getCol() == ghosts[i].getCol())
+		if (pacman.getRow() == ghosts[i]->getRow()) // check if ghosts[i] ate pacman
+			if (pacman.getCol() == ghosts[i]->getCol())
 			{
 				pacman.setPacmanLives();
 				PrintLifeLost();
@@ -49,7 +49,7 @@ void Game::PrintBoard() const
 		for (col = 0; col < maxCol; col++)
 			board[row][col].printPiece(row,col);
 	for (auto i = 0; i < ghosts.size(); i++)
-		ghosts[i].Print();
+		ghosts[i]->Print();
 	pacman.printPacman();
 	PrintScoreAndLives();
 	
@@ -58,6 +58,7 @@ void Game::PrintBoard() const
 void Game::Menu()
 {
 	char user_input;
+	int GhostLevel = 0;
 	PrintMenu();
 	Color = false;
 	
@@ -67,10 +68,13 @@ void Game::Menu()
 		switch (user_input)
 		{
 		case '1':
-			RegularGame();
+			RegularGame(GhostLevel);
 			break;
 		case '2':
-			SpecificFileCycle();
+			SpecificFileCycle(GhostLevel);
+			break;
+		case '3':
+			ChooseGhostLevel(GhostLevel);
 			break;
 		case '7': turnColor();
 			break;
@@ -97,6 +101,7 @@ void Game::PrintMenu() const
 	cout << "Welcome To Pacman" << endl;
 	cout << "(1) Start a new regular game" << endl;
 	cout << "(2) Start a specific level of your choice" << endl;
+	cout << "(3) Select a difficulty level for ghosts " << endl;
 	cout << "(7) Turn on/off colors" << endl;
 	cout << "(8) Present instructions and keys" << endl;
 	cout << "(9) EXIT" << endl;
@@ -129,6 +134,20 @@ void Game::Instructions(char& user_input)
 	} while (user_input != 27);
 }
 
+void Game::ChooseGhostLevel(int& GhostLevel)
+{
+	cout << "Choose the ghost's level: " << endl;
+	cout << "Press 1. for Novice ghosts" << endl;
+	cout << "Press 2. for Good ghosts" << endl;
+	cout << "Press 3. for Best ghosts" << endl;
+	cin >> GhostLevel;
+	while (0 >= GhostLevel || GhostLevel > 3)
+	{
+		cout << "Incorrect Input, please enter a number between 1 to 3 to choose your level of ghosts";
+		cin >> GhostLevel;
+	}
+}
+
 void Game::GameRun()
 {
 	clrscr();
@@ -136,7 +155,7 @@ void Game::GameRun()
 	char flush;
 	char tmp_move = 0;
 	bool is_ghost_turn = false;
-	while (pacman.getPacmanLives() != 0 && _numBread != 0)//or pacman earned max points
+	while (pacman.getPacmanLives() != 0 && _numBread != 0)
 	{
 		if (IsGamePaused(tmp_move) == true) //waits until user select ESC again to continue game.
 		{
@@ -233,24 +252,23 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn)
 	{
 		fruit.updateStatus(maxRow, maxCol, board);
 		for (i = 0; i < ghosts.size(); i++) // updates the ghost's movements (if needed it changes direction)
-			ghosts[i].UpdateMove(maxRow, maxCol, board);
+			ghosts[i]->UpdateMove(maxRow, maxCol, board);
 		is_ghost_turn = false;
 		CheckGhostFruitImpact();
 	}
 	else
 		is_ghost_turn = true;
 	for (i = 0; i < ghosts.size(); i++)
-		ghosts[i].Print();
+		ghosts[i]->Print();
 	CheckImpact();
-	
+	CheckIfPacmanAteFood();
 }
 
 void Game::PacmanCheck()
 {
 	if (pacman.CheckIfPacmanHitWall(maxRow, maxCol, board) == true) 
 	{
-	//check tunnel
-		if(pacman.CheckTunnel(maxRow, maxCol, board) != true)
+		if(pacman.CheckTunnel(maxRow, maxCol, board) != true) // if tunnel, move pacman to the other side
 		pacman.setPacmanDirection(STAY); // if wall, dont move pacman and put stay as direction
 	}
 	else
@@ -267,7 +285,7 @@ void Game::CheckIfPacmanAteFood()
 		_numBread--;
 		board[pacman.getRow()][pacman.getCol()].setGamePiece(Space);
 	}
-	if (fruit.checkAppear())
+	if (fruit.checkAppear()) 
 	{
 		if (pacman.getRow() == fruit.getRow())
 			if (pacman.getCol() == fruit.getCol())
@@ -314,7 +332,7 @@ void Game::GhostInitialize()
 	int i;
 	for (i = 0; i < ghosts.size(); i++)
 	{
-		ghosts[i].SetPosition(ghosts[i].getStartRow(),ghosts[i].getStartCol());
+		ghosts[i]->SetPosition(ghosts[i]->getStartRow(),ghosts[i]->getStartCol());
 	}
 }
 
@@ -355,14 +373,15 @@ void Game::CheckGhostFruitImpact()
 	int i;
 	for (i = 0; i < ghosts.size(); i++)
 	{
-		if (fruit.getRow() == ghosts[i].getRow())
-			if (fruit.getCol() == ghosts[i].getCol())
-			{
-				fruit.Eaten();
-				cout << "                         ";
-				cout << "Fruit was eaten by ghost";
-				return;
-			}
+		if(fruit.checkAppear())
+			if (fruit.getRow() == ghosts[i]->getRow())
+				if (fruit.getCol() == ghosts[i]->getCol())
+				{
+					fruit.Eaten();
+					cout << "                         ";
+					cout << "Fruit was eaten by ghost";
+					return;
+				}
 	}
 }
 
@@ -392,12 +411,12 @@ void Game::checkFileNameFormat()
 
 
 
-void Game::RegularGame()
+void Game::RegularGame(int & GhostLevel)
 {
 	int size = GameFiles.size(), i,maxRow = 0, maxCol = 0;
 	for (i = 0 ; i < size ; i++)
 	{
-		getBoardInformation(i);
+		getBoardInformation(i, GhostLevel);
 		GameRun();
 		if (pacman.getPacmanLives() == 0)
 		{
@@ -411,7 +430,7 @@ void Game::RegularGame()
 	EndGameMessage();
 }
 
-void Game::SpecificFileCycle()
+void Game::SpecificFileCycle(int & GhostLevel)
 {
 	string file_name;
 	int fileIndex;
@@ -421,7 +440,7 @@ void Game::SpecificFileCycle()
 	if (binary_search(GameFiles.begin(), GameFiles.end(), file_name))
 	{
 		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
-		getBoardInformation(fileIndex);
+		getBoardInformation(fileIndex, GhostLevel);
 		GameRun(); //tomorrow
 	}
 	else
@@ -456,8 +475,13 @@ void Game::ClearLevel()
 	}
 }
 
-void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, Ghost& ghost)
+void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel)
 {
+	//ghosts.push_back(new Good_Ghost);
+	//ghosts.push_back(new Ghost);
+	//ghosts[0]->hello(); 
+	//ghosts[1]->hello();
+	//ghoste[0] = new Good_Ghost;
 	if (legend_appear)
 	{
 		if (_legend.getRow() <= row && row <= _legend.getRow() + 2)
@@ -475,8 +499,13 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 		board[row][col].setGamePiece(Space);
 		break;
 	case Ghost_sign:
-		ghosts.push_back(ghost);
-		ghosts[ghosts.size() - 1].setStartPosition(row, col);
+		if(GhostLevel == 1)
+		ghosts.push_back(new Ghost);
+		else if(GhostLevel == 2)
+		ghosts.push_back(new Good_Ghost);
+		else
+		ghosts.push_back(new Best_Ghost);
+		ghosts[ghosts.size() - 1]->setStartPosition(row, col);
 		board[row][col].setGamePiece(FOOD);
 		_numBread++;
 		break;
@@ -519,12 +548,11 @@ void Game::WaitMessage() const
 }
 
 /*maxrow and maxcol are used for tunnels*/
-void Game::getBoardInformation(int fileIndex)
+void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 {
 	ifstream File;
 	vector<GameBoard> boardLine;
 	GameBoard boardCol;
-	Ghost ghost;
 	if (board.empty() && ghosts.empty())
 	{
 		board.push_back(boardLine);
@@ -545,14 +573,8 @@ void Game::getBoardInformation(int fileIndex)
 	{
 		if (ch != '\n')
 		{
-			if (maxRow == 15 && colCounter == 50)
-			{
-				int x;
-			}
-
-
 			board[maxRow].push_back(boardCol);
-			DecideChar(maxRow, colCounter, ch, legend_appear, ghost);
+			DecideChar(maxRow, colCounter, ch, legend_appear, GhostLevel);
 			colCounter++;
 			if (maxRow == 0)
 			{
