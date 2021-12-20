@@ -6,7 +6,7 @@ void GameObject::SetPosition(const int row, const int col)
 	_pos.SetCol(col);
 }
 
-bool GameObject::CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
+bool GameObject::CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	if (row == maxRow || row == -1)
 		return true;
@@ -17,7 +17,7 @@ bool GameObject::CheckWall(const int& row, const int& col, const int& maxRow, co
 	return false;
 }
 
-bool GameObject::CheckTunnel(const int& row, const int& col ,const int& maxRow,const int& maxCol, vector<vector<GameBoard>> board)
+bool GameObject::CheckTunnel(const int& row, const int& col ,const int& maxRow,const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	if (row == 0)
 	{
@@ -51,7 +51,7 @@ bool GameObject::CheckTunnel(const int& row, const int& col ,const int& maxRow,c
 		return false;
 }
 
-bool GameObject::Obstacle(const int& row, const int& col, const int& maxRow, const int& maxCol ,vector<vector<GameBoard>> board, Direction direction)
+bool GameObject::Obstacle(const int& row, const int& col, const int& maxRow, const int& maxCol ,vector<vector<GameBoard>>& board, Direction direction)
 {
 	switch (direction)
 	{
@@ -71,7 +71,7 @@ bool GameObject::Obstacle(const int& row, const int& col, const int& maxRow, con
 	return false;
 }
 
-Direction GameObject::SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
+Direction GameObject::SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	int random_move, row = _pos.getRow(), col = _pos.getCol();
 	while (true)
@@ -107,22 +107,22 @@ Direction GameObject::SetMove(const int& maxRow, const int& maxCol, vector<vecto
 
 }
 
-void GameObject::Movement(vector<vector<GameBoard>> board)
+void GameObject::Movement(vector<vector<GameBoard>>& board)
 {
 	int row = _pos.getRow(), col = _pos.getCol();
 
-	switch ((int)direction)
+	switch (direction)
 	{
-	case (int)Direction::Up: SetPosition(row - 1, col);
+	case Direction::Up: SetPosition(row - 1, col);
 		board[row][col].printPiece(row, col);
 		break;
-	case (int)Direction::Down: SetPosition(row + 1, col);
+	case Direction::Down: SetPosition(row + 1, col);
 		board[row][col].printPiece(row, col);
 		break;
-	case (int)Direction::Left: SetPosition(row, col - 1);
+	case Direction::Left: SetPosition(row, col - 1);
 		board[row][col].printPiece(row, col);
 		break;
-	case (int)Direction::Right: SetPosition(row, col + 1);
+	case Direction::Right: SetPosition(row, col + 1);
 		board[row][col].printPiece(row, col);
 		break;
 	default:

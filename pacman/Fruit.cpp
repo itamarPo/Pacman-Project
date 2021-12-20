@@ -9,14 +9,14 @@ Fruit::Fruit()
 	direction = (Direction)(rand() % 4);
 }
 
-void Fruit::setStartPos(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
+void Fruit::setStartPos(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	int row=0, col=0;
 	do
 	{
 		row = rand() % maxRow;
 		col = rand() % maxCol;
-	} while (CheckWall(row, col, maxRow, maxCol, board) || CheckTunnel(row, col, maxRow, maxCol, board)); // need to check if a fruit can be spawned on ghost or pacman
+	} while (CheckWall(row, col, maxRow, maxCol, board) || CheckTunnel(row, col, maxRow, maxCol, board));
 	_pos.SetRow(row);
 	_pos.SetCol(col);
 }
@@ -33,7 +33,7 @@ void Fruit::setAppear()
 	_appear = !_appear;
 }
 
-void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
+void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	_moves++;
 	if (_appear)
@@ -54,7 +54,6 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 			}
 			Movement(board);
 		}
-		//This might be need to be changed:
 		Print();
 	}
 	else
@@ -85,8 +84,6 @@ void Fruit::Eaten()
 }
 
 
-
-
 bool Fruit::checkAppear() const
 {
 	return _appear;
@@ -102,28 +99,3 @@ void Fruit::Print() const
 	gotoxy(_pos.getRow(), _pos.getCol());
 	cout << _scoreNum;
 }
-
-/*
-void Fruit::Movement(vector<vector<GameBoard>> board)
-{
-	int row = _pos.getRow(), col = _pos.getCol();
-
-	switch (_direction)
-	{
-	case Direction::Up: SetPosition(row - 1, col);
-		board[row][col].printPiece(row, col);
-		break;
-	case Direction::Down: SetPosition(row + 1, col);
-		board[row][col].printPiece(row, col);
-		break;
-	case Direction::Left: SetPosition(row, col - 1);
-		board[row][col].printPiece(row, col);
-		break;
-	case Direction::Right: SetPosition(row, col + 1);
-		board[row][col].printPiece(row, col);
-		break;
-	default:
-		break;
-	}
-}
-*/

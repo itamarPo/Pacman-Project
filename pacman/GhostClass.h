@@ -4,9 +4,6 @@
 #include <queue>
 
 using namespace std;
-const int StartGhostRow = 7;
-const int StartGhostCol = 54;
-//enum GhostDirection{Up_G, Down_G, Left_G, Right_G};
 const char Ghost_sign = '$';
 extern bool Color;
 
@@ -35,14 +32,9 @@ public:
 	Direction GetDirection();
 
 	void Print()const;
-	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, Pacman& pacman);
-	Direction SmartMove(const int& maxRow, const int& maxCol,Pacman &pacman, vector<vector<GameBoard>> board);
+	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board, Pacman& pacman);
+	Direction SmartMove(const int& maxRow, const int& maxCol,Pacman &pacman, vector<vector<GameBoard>>& board);
 	
-	//GhostDirection SetMove(GameBoard board[][SizeCol]);
-	//void Movement(vector<vector<GameBoard>> board);
-	//bool Obstacle(const int& x, const int& y, GameBoard board[][SizeCol], GhostDirection direction) const;
-
-
 protected:
 	int move_counter;
 };

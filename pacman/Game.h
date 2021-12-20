@@ -9,7 +9,7 @@
 #include <filesystem>
 #include <string>
 #include <fstream>
-#include <typeinfo>
+
 
 const int GameSpeed = 200;
 const int GameOverWon = 3000;
@@ -17,16 +17,13 @@ extern bool Color;
 using std::filesystem::directory_iterator;
 const char filenamestart[] = "pacman_";
 const char filenamefinish[] = ".screen";
-const char Legend = '&';
-const char EmptyPos = '%';
-const char Space = ' ';
 const int SizeToCheck = 6;
 
 
 class Game
 {
 private: 
-	vector<vector<GameBoard>> board; //levelofghost* 
+	vector<vector<GameBoard>> board;
 	Pacman pacman;
 	vector<Ghost*> ghosts;
 	Position _legend;

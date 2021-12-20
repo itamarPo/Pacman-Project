@@ -8,7 +8,7 @@ private:
 
 public:
 	Good_Ghost();
-	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board , Pacman & pacman);
+	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board , Pacman & pacman);
 	int RandomizeMove();
 };
 

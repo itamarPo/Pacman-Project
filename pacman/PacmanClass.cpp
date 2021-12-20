@@ -43,7 +43,6 @@ void Pacman::setPacmanLives(int minus)
 
 void Pacman::setPacmanDirection(const char& _direction)
 {
-	//direction = _direction;
 	if (_direction == LEFT || _direction == (LEFTA))
 		direction = Direction::Left;
 	else if (_direction == RIGHT || _direction == (RIGHTD))
@@ -77,22 +76,12 @@ void Pacman::printPacman() const
 	gotoxy(_pos.getRow(),_pos.getCol());
 	if (Color)
 	{
-		cout << YELLOW << "@" << RESET;
+		cout << YELLOW << Pacman_sign << RESET;
 	}
 	else
-		cout << "@";
-}
-/*
-int Pacman::getPacmanRow() const 
-{
-	return _pos.getRow();
+		cout << Pacman_sign;
 }
 
-int Pacman::getPacmanCol() const
-{
-	return _pos.getCol();
-}
-*/
 int Pacman::getPacmanScore() const
 {
 	return _score;
@@ -114,7 +103,7 @@ Direction Pacman::getPacmanDirection() const
 	return direction;
 }
 
-bool Pacman::CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board)
+bool Pacman::CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	
 	if (direction == Direction::Up)
@@ -137,7 +126,7 @@ bool Pacman::CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<v
 		return false;
 }
 
-bool Pacman::CheckTunnel(const int& maxRow,const int& maxCol, vector<vector<GameBoard>> board)
+bool Pacman::CheckTunnel(const int& maxRow,const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	if (_pos.getRow() == 0 && direction == Direction::Up)
 	{

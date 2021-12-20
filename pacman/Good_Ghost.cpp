@@ -1,6 +1,6 @@
 #include "Good_Ghost.h"
 
-void Good_Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>> board, Pacman& pacman)
+void Good_Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board, Pacman& pacman)
 {
 	
 	if (!smart)
