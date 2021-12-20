@@ -1,5 +1,5 @@
 #pragma once
-#include <iostream>
+#include "GotoXY.h"
 using namespace std;
 extern bool Color;
 
@@ -7,13 +7,14 @@ class Position
 {
 public:
 	Position();
+	Position(const Position& pos);
 	~Position();
 
 	void SetRow(const int& x);
 	void SetCol(const int& y);
 
-	int getCol();
-	int getRow();
+	int getCol() const;
+	int getRow() const;
 
 private:
 	int _row;

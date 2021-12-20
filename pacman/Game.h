@@ -1,41 +1,67 @@
 #pragma once
 #include "GameBoard.h"
 #include "GhostClass.h"
+#include "Best_Ghost.h"
+#include "Good_Ghost.h"
 #include "PacmanClass.h"
+#include "GameObject.h"
+#include "Fruit.h"
+#include <filesystem>
+#include <string>
 #include <fstream>
-class Ghost;
-class Pacman;
+
+
 const int GameSpeed = 200;
 const int GameOverWon = 3000;
 extern bool Color;
+using std::filesystem::directory_iterator;
+const char filenamestart[] = "pacman_";
+const char filenamefinish[] = ".screen";
+const int SizeToCheck = 6;
 
 
 class Game
 {
 private: 
+	vector<vector<GameBoard>> board;
+	Pacman pacman;
+	vector<Ghost*> ghosts;
+	Position _legend;
+	vector<string> GameFiles;
+	Fruit fruit;
 	int _numBread;
+	int maxRow;
+	int maxCol;
 public:
 	Game();
 	~Game();
-	static bool CheckWall(const int& x, const int& y, GameBoard board[][SizeCol]);
-	static bool CheckTunnel(const int& x, const int& y, GameBoard board[][SizeCol]);
-	void CheckImpact(Pacman& pacman,Ghost* ghosts, GameBoard board[][SizeCol]);
-	//char DecideChar(const int& row, const int& col);
-	void GameCycle();
-	void InitBoard(GameBoard board[][SizeCol]);
-	void PrintBoard(GameBoard board[][SizeCol], Pacman& pacman, Ghost* ghosts) const;
+	void CheckImpact();
+	void Start();
+	void PrintBoard() const;
 	void Menu();
 	void PrintMenu() const;
 	void Instructions(char& user_input);
-	void GameRun(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol]);
+	void ChooseGhostLevel(int& GhostLevel);
+	void GameRun();
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
-	void ConsequencesOfMove(Pacman& pacman, Ghost* ghosts, GameBoard board[][SizeCol], bool& is_ghost_turn);
-	void PacmanCheck(Pacman& pacman, GameBoard board[][SizeCol]);
-	void CheckIfPacmanAteFood(Pacman& pacman, GameBoard board[][SizeCol]);
-	void PrintScoreAndLives(Pacman& pacman)const;
-	void GhostInitialize(Ghost* ghosts);
-	void PrintLifeLost(Pacman& pacman); 
-	void CheckTunnel(Pacman& pacman, GameBoard[][SizeCol]);
+	void ConsequencesOfMove(bool& is_ghost_turn);
+	void PacmanCheck();
+	void CheckIfPacmanAteFood();
+	void PrintScoreAndLives()const;
+	void GhostInitialize();
+	void PrintLifeLost() const; 
 	void turnColor();
+	void CheckGhostFruitImpact();
+	void getGameFiles(bool& filesFound);
+	void checkFileNameFormat();
+	void getBoardInformation(int fileIndex, int & GhostLevel);
+	void ClearGame();
+	void RegularGame(int & GhostLevel);
+	void SpecificFileCycle(int & GhostLevel);
+	void ClearLevel();
+	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel);
+	void EndGameMessage() const;
+	void WinGameMessage() const;
+	void WaitMessage()const;
 };
