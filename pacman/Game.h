@@ -6,6 +6,7 @@
 #include "PacmanClass.h"
 #include "GameObject.h"
 #include "Fruit.h"
+#include "InputParser.h"
 #include <filesystem>
 #include <string>
 #include <fstream>
@@ -18,7 +19,7 @@ using std::filesystem::directory_iterator;
 const char filenamestart[] = "pacman_";
 const char filenamefinish[] = ".screen";
 const int SizeToCheck = 6;
-
+enum class CmdArg {Simple, Load, Save, Silent};
 
 class Game
 {
@@ -29,6 +30,7 @@ private:
 	Position _legend;
 	vector<string> GameFiles;
 	Fruit fruit;
+	CmdArg status;
 	int _numBread;
 	int maxRow;
 	int maxCol;
@@ -36,13 +38,14 @@ public:
 	Game();
 	~Game();
 	void CheckImpact();
-	void Start();
+	void Start(int& argc, char** argv);
+	void getCommandStatus(int& argc, char** argv);
 	void PrintBoard() const;
 	void Menu();
 	void PrintMenu() const;
 	void Instructions(char& user_input);
 	void ChooseGhostLevel(int& GhostLevel);
-	void GameRun();
+	void GameRun(int& filedIndex);
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
 	void ConsequencesOfMove(bool& is_ghost_turn);

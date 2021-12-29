@@ -6,6 +6,7 @@ Game::Game()
 	_numBread = 0;
 	maxRow = 0;
 	maxCol = 0;
+	status = CmdArg::Simple;
 }
 
 Game::~Game()
@@ -35,13 +36,50 @@ void Game::CheckImpact()
 }
 
 
-void Game::Start()
+void Game::Start(int& argc, char** argv)
 {
 	bool filesFound = true;
 	getGameFiles(filesFound);
 	if (!filesFound)
 		return;
-	Menu();
+	getCommandStatus(argc, argv);
+	if(status == CmdArg::Simple || status == CmdArg::Save)
+		Menu();
+	//else load,silent
+}
+
+void Game::getCommandStatus(int& argc, char** argv)
+{
+	int i;
+	for (i = 1; i < argc; i++)
+	{
+		if (i == 1)
+		{
+			if (!strcmp(argv[i], "-save"))
+			{
+				status = CmdArg::Save;
+				cout << "save" << endl;
+				Sleep(2000);
+				return;
+			}
+			else if (strcmp(argv[i], "-load"))
+			{
+				status = CmdArg::Simple;
+				return;
+			}
+			else
+			{
+				status = CmdArg::Load;
+			}
+		}
+		if (i == 2)
+		{
+			if (!strcmp(argv[i], "[-silent]"))
+				status = CmdArg::Silent;
+		}
+	}
+
+
 }
 
 
@@ -152,8 +190,24 @@ void Game::ChooseGhostLevel(int& GhostLevel)
 	}
 }
 
-void Game::GameRun()
+void Game::GameRun(int& fileIndex)
 {
+	string stepsFile = GameFiles[fileIndex], resultFile;
+	stepsFile.resize(stepsFile.size() - 6);
+	resultFile = stepsFile;
+	stepsFile += "steps";
+	resultFile += "result";
+	ofstream resFile, stepFile;
+	resFile.open(resultFile);
+	resFile << "fdlsfks;dlf";
+	resFile.close();
+	//stepFile.close();
+		if (!resFile) { // file couldn't be opened
+			cout << "Error: file could not be opened" << endl;
+			exit(1);
+		}
+
+    //open
 	clrscr();
 	PrintBoard();
 	char flush;
@@ -185,6 +239,7 @@ void Game::GameRun()
 	}
 	clrscr();
 	gotoxy(10, 20);
+	//close
 }
 
 bool Game::IsGamePaused(char& pause)
@@ -242,15 +297,7 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn)
 		return;
 	if (is_ghost_turn == true)// makes sure that ghosts move once in two p5acman moves.
 	{
-		try
-		{
-			fruit.updateStatus(maxRow, maxCol, board);
-		}
-		catch (...)
-		{
-			cout << "unkown error";
-		}
-		
+		fruit.updateStatus(maxRow, maxCol, board);
 		for (i = 0; i < ghosts.size(); i++) // updates the ghost's movements (if needed it changes direction)
 			ghosts[i]->UpdateMove(maxRow, maxCol, board, pacman);
 		is_ghost_turn = false;
@@ -417,7 +464,7 @@ void Game::RegularGame(int & GhostLevel)
 	for (i = 0 ; i < size ; i++)
 	{
 		getBoardInformation(i, GhostLevel);
-		GameRun();
+		GameRun(i);
 		if (pacman.getPacmanLives() == 0)
 		{
 			EndGameMessage();
@@ -456,7 +503,7 @@ void Game::SpecificFileCycle(int & GhostLevel)
 	{
 		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
 		getBoardInformation(fileIndex, GhostLevel);
-		GameRun();
+		GameRun(fileIndex);
 		if (pacman.getPacmanLives() == 0)
 			EndGameMessage();
 		else

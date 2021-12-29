@@ -40,6 +40,7 @@
     <ClInclude Include="GhostClass.h" />
     <ClInclude Include="Good_Ghost.h" />
     <ClInclude Include="GotoXY.h" />
+    <ClInclude Include="InputParser.h" />
     <ClInclude Include="PacmanClass.h" />
     <ClInclude Include="Position.h" />
   </ItemGroup>
