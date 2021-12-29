@@ -9,16 +9,18 @@ protected:
 	Position _pos;
 	Position _startPos;
 	Direction direction = Direction::Stay;
+	int _moves = 0;
 public:
 	void SetPosition(const int row, const int col);
-
+	int getMoves()const;
+	void updateMoves();
 	bool CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board);
 	virtual bool CheckTunnel(const int& row, const int& col, const int& maxRow,const int& maxCol, vector<vector<GameBoard>>& board);
 	bool Obstacle(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board, Direction direction);
 	Direction SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board);
 	void Movement(vector<vector<GameBoard>>& board);
 	void setStartPosition(const int& row, const int& col);
-	
+	Direction getDirection() const;
 	
 	int getStartRow() const;
 	int getStartCol() const;

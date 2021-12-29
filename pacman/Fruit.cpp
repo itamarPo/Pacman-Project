@@ -1,5 +1,6 @@
 #include "Fruit.h"
 
+
 Fruit::Fruit()
 {
 	_scoreNum = 5 + rand() % 4;
@@ -33,8 +34,9 @@ void Fruit::setAppear()
 	_appear = !_appear;
 }
 
-void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
+void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board, ofstream& stepFile, bool IsSave)
 {
+	
 	_moves++;
 	if (_appear)
 	{
@@ -43,6 +45,8 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 			_moves = 0;
 			setAppear();
 			setMovesAppear();
+			if(IsSave)
+				stepFile << "F2 " << _pos.getRow() << ' ' << _pos.getCol() << endl;
 			board[_pos.getRow()][_pos.getCol()].printPiece(_pos.getRow(), _pos.getCol());
 			return;
 		}
@@ -55,6 +59,10 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 			Movement(board);
 		}
 		Print();
+		if(IsSave)
+		{
+			stepFile << "F1 " << (int)direction << endl;
+		}
 	}
 	else
 	{
@@ -62,6 +70,10 @@ void Fruit::updateStatus(const int& maxRow, const int& maxCol, vector<vector<Gam
 		{
 			setStartPos(maxRow, maxCol, board);
 			setAppear();
+			if(IsSave)
+			{
+				stepFile << "F0 " << (int)direction << ' ' << _pos.getRow() << ' ' << _pos.getCol() << endl;
+			}
 			setScore();
 			_moves = 0;
 			direction = SetMove(maxRow, maxCol, board);

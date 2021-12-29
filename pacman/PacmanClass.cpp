@@ -98,10 +98,6 @@ void Pacman::ResetPos()
 	_pos.SetCol(getStartCol());
 }
 
-Direction Pacman::getPacmanDirection() const
-{
-	return direction;
-}
 
 bool Pacman::CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
 {

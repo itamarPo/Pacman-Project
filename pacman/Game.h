@@ -48,7 +48,7 @@ public:
 	void GameRun(int& filedIndex);
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
-	void ConsequencesOfMove(bool& is_ghost_turn);
+	void ConsequencesOfMove(bool& is_ghost_turn, ofstream& stepFile);
 	void PacmanCheck();
 	void CheckIfPacmanAteFood();
 	void PrintScoreAndLives()const;

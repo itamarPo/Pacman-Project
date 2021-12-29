@@ -198,19 +198,16 @@ void Game::GameRun(int& fileIndex)
 	stepsFile += "steps";
 	resultFile += "result";
 	ofstream resFile, stepFile;
+	// maybe add if to create files.
 	resFile.open(resultFile);
-	resFile << "fdlsfks;dlf";
-	resFile.close();
-	//stepFile.close();
+	stepFile.open(stepsFile);
 		if (!resFile) { // file couldn't be opened
 			cout << "Error: file could not be opened" << endl;
 			exit(1);
 		}
 
-    //open
 	clrscr();
 	PrintBoard();
-	char flush;
 	char tmp_move = 0;
 	bool is_ghost_turn = false;
 	while (pacman.getPacmanLives() != 0 && _numBread != 0)
@@ -232,11 +229,15 @@ void Game::GameRun(int& fileIndex)
 			}
 		}
 		
-		ConsequencesOfMove(is_ghost_turn);
+		ConsequencesOfMove(is_ghost_turn, stepFile);
 		if (pacman.getPacmanLives() != 0)
 			PrintScoreAndLives();
 		Sleep(GameSpeed);
 	}
+	if(status == CmdArg::Save)
+		resFile << pacman.getMoves();
+	resFile.close();
+	stepFile.close();
 	clrscr();
 	gotoxy(10, 20);
 	//close
@@ -286,18 +287,25 @@ bool Game::IsMoveValid(const char& ch)
 
 /*this function checks if pacman ate, hit a ghost, or got into a tunnel*/
 
-void Game::ConsequencesOfMove(bool& is_ghost_turn)
+void Game::ConsequencesOfMove(bool& is_ghost_turn, ofstream& stepFile)
 {
 	int pacRow = pacman.getRow(), pacCol = pacman.getCol(),i; 
+	bool IsSave = false;
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
 	PacmanCheck();
+	if(status == CmdArg::Save)
+	{
+		IsSave = true;
+		stepFile << "P " << (int)pacman.getDirection() << endl;
+	}
 	CheckImpact();
 
 	if (pacman.getPacmanLives() == 0)
 		return;
 	if (is_ghost_turn == true)// makes sure that ghosts move once in two p5acman moves.
 	{
-		fruit.updateStatus(maxRow, maxCol, board);
+		bool fruitappear = fruit.checkAppear();
+		fruit.updateStatus(maxRow, maxCol, board,stepFile, IsSave);
 		for (i = 0; i < ghosts.size(); i++) // updates the ghost's movements (if needed it changes direction)
 			ghosts[i]->UpdateMove(maxRow, maxCol, board, pacman);
 		is_ghost_turn = false;
@@ -306,7 +314,14 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn)
 	else
 		is_ghost_turn = true;
 	for (i = 0; i < ghosts.size(); i++)
+	{
+	
 		ghosts[i]->Print();
+		if(IsSave)
+		{
+			stepFile << 'G'<< i << ' ' << (int)ghosts[i]->getDirection() << endl;
+		}
+	}
 	CheckImpact();
 	CheckIfPacmanAteFood();
 }
@@ -322,6 +337,7 @@ void Game::PacmanCheck()
 		pacman.setPacmanPosition(); // set new position due to direction
 	CheckIfPacmanAteFood();
 	pacman.printPacman(); // print pacman at his new position
+	pacman.updateMoves();
 }
 
 void Game::CheckIfPacmanAteFood()

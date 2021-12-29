@@ -6,6 +6,16 @@ void GameObject::SetPosition(const int row, const int col)
 	_pos.SetCol(col);
 }
 
+int GameObject::getMoves() const
+{
+	return _moves;
+}
+
+void GameObject::updateMoves()
+{
+	_moves += 1;
+}
+
 bool GameObject::CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board)
 {
 	if (row == maxRow || row == -1)
@@ -136,6 +146,11 @@ void GameObject::setStartPosition(const int& row, const int& col)
 	_pos.SetRow(row);
 	_startPos.SetCol(col);
 	_startPos.SetRow(row);
+}
+
+Direction GameObject::getDirection() const
+{
+	return direction;
 }
 
 int GameObject::getStartRow() const
