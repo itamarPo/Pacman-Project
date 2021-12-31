@@ -46,6 +46,13 @@ public:
 	void Instructions(char& user_input);
 	void ChooseGhostLevel(int& GhostLevel);
 	void GameRun(int& filedIndex);
+	void getStepsResFileNames(string& steps, string& res, int& fileIndex);
+	void LoadConcequence();
+	void GameRunLoadSilent();
+	void ReadStepsFromFiles(int& fileIndex);
+	void PacmanLoadCheck();
+	void FruitLoad(string& line);
+	void readFruitPos(string& line, int index, int fruitStatus);
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
 	void ConsequencesOfMove(bool& is_ghost_turn, ofstream& stepFile);

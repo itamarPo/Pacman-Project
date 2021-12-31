@@ -12,6 +12,8 @@ protected:
 	int _moves = 0;
 public:
 	void SetPosition(const int row, const int col);
+	void SetLoadDirection(const Direction& _direction);
+
 	int getMoves()const;
 	void updateMoves();
 	bool CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board);

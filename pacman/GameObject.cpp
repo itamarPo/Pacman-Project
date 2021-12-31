@@ -6,6 +6,11 @@ void GameObject::SetPosition(const int row, const int col)
 	_pos.SetCol(col);
 }
 
+void GameObject::SetLoadDirection(const Direction& _direction)
+{
+	direction = _direction;
+}
+
 int GameObject::getMoves() const
 {
 	return _moves;
