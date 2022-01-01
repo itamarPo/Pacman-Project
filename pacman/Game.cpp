@@ -62,8 +62,6 @@ void Game::getCommandStatus(int& argc, char** argv)
 			if (!strcmp(argv[i], "-save"))
 			{
 				status = CmdArg::Save;
-				cout << "save" << endl;
-				Sleep(2000);
 				return;
 			}
 			else if (strcmp(argv[i], "-load"))
@@ -204,27 +202,17 @@ void Game::getStepsResFileNames(string& steps, string& res, int& fileIndex)
 	res += "result";
 }
 
-void Game::LoadConcequence()
-{
-}
 
 void Game::GameRun(int& fileIndex)
 {
 	string stepsFile, resultFile;
-	//stepsFile.resize(stepsFile.size() - 6);
-	//resultFile = stepsFile;
-	//stepsFile += "steps";
-	//resultFile += "result";
 	ofstream resFile, stepFile;
-	getStepsResFileNames(stepsFile, resultFile, fileIndex);
-	// maybe add if to create files.
-	resFile.open(resultFile);
-	stepFile.open(stepsFile);
-		if (!resFile) { // file couldn't be opened
-			cout << "Error: file could not be opened" << endl;
-			exit(1);
-		}
-
+	if (status == CmdArg::Save)
+	{
+		getStepsResFileNames(stepsFile, resultFile, fileIndex);
+		resFile.open(resultFile);
+		stepFile.open(stepsFile);
+	}
 	clrscr();
 	PrintBoard();
 	char tmp_move = 0;
@@ -253,13 +241,15 @@ void Game::GameRun(int& fileIndex)
 			PrintScoreAndLives();
 		Sleep(GameSpeed);
 	}
-	if(status == CmdArg::Save)
+	if (status == CmdArg::Save)
+	{
 		resFile << pacman.getMoves();
-	resFile.close();
-	stepFile.close();
+		resFile.close();
+		stepFile.close();
+	}
 	clrscr();
 	gotoxy(10, 20);
-	//close
+	
 }
 
 void Game::GameRunLoadSilent()
@@ -275,40 +265,15 @@ void Game::GameRunLoadSilent()
 			if (moves != pacman.getMoves())
 			{
 				clrscr();
-				cout << "Test Failed! 1";
+				cout << "Test Failed!";
 				ClearLevel();
 				return;
 			}
 			else
 			{
 				clrscr();
-				cout << "Test for level: " << i << "Passed!";
-				//Sleep(200);
+				cout << "Test Passed!";
 			}
-			///*if(i == size - 1)
-			//{
-			//clrscr();
-			//	if(moves != pacman.getMoves())
-			//	{
-			//		
-			//		cout << "Test failed! 1";
-			//	}
-			//	else
-			//	{
-			//		cout << "Test Passed!";
-			//	}
-			//}*/
-			//else
-			//{
-			//	if (moves != pacman.getMoves())
-			//	{
-			//		clrscr();
-			//		cout << "Test failed! 2";
-			//		ClearLevel();
-			//		return;
-			//	}
-			//		
-			//}
 		}
 	
 		tmp_pacman_move = pacman.getMoves();
@@ -318,18 +283,22 @@ void Game::GameRunLoadSilent()
 			clrscr();
 			if (status == CmdArg::Silent)
 			{
+				clrscr();
 				if (moves == tmp_pacman_move)
 				{
 					cout << "Test Passed!";
 				}
 				else
-					cout << "Test failed! 3";
+					cout << "Test failed!";
 			}
+			else
+				cout << "End Of Record";
 			return;
 		}
 		
 	}
-	
+	if(status == CmdArg::Load)
+		cout << "End Of Record";
 	
 }
 
@@ -369,7 +338,6 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 		case 'G':
 			ghosts[(int)line[1]-'0']->SetLoadDirection((Direction)((int)line[3] - '0'));
 			ghosts[(int)line[1]-'0']->Movement(board);
-			//ghosts[(int)line[1]-'0']->Print();
 			break;
 		case 'F': FruitLoad(line);
 			break;
@@ -383,7 +351,6 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 		counter++;
 		if (status == CmdArg::Load)
 			PrintScoreAndLives();
-		///general check of board situation
 	}
 	resFile >> numMoves;
 	
@@ -410,6 +377,7 @@ void Game::FruitLoad(string& line)
 	case '0':
 		fruit.setAppear();
 		fruit.SetLoadDirection((Direction)((int)line[3]-'0'));
+		fruit.setScore((int)line[line.size() - 1] - '0');
 		readFruitPos(line, 5, 0);
 		fruit.Print();
 		break;
@@ -442,7 +410,7 @@ void Game::readFruitPos(string& line, int index, int fruitStatus)
 		index++;
 
 	col = (int)line[index++]-'0';
-	if(index < line.size())
+	if(line[index] != ' ')
 	{
 		col *= 10;
 		col += (int)line[index]-'0';
@@ -452,7 +420,6 @@ void Game::readFruitPos(string& line, int index, int fruitStatus)
 	else
 	{
 		fruit.SetPosition(0, 0);
-		//board[row][col].printPiece(row,col);
 	}
 
 }
@@ -526,7 +493,6 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn, ofstream& stepFile)
 		CheckGhostFruitImpact();
 		for (i = 0; i < ghosts.size(); i++)
 		{
-
 			ghosts[i]->Print();
 			if (IsSave)
 			{

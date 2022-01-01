@@ -9,6 +9,7 @@ public:
     Fruit();
     void setStartPos(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board);
     void setScore();
+    void setScore(int num);
     void setAppear();
     void updateStatus(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board,ofstream& stepFile,bool IsSave);
     void setMovesAppear();

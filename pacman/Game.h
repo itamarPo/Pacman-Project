@@ -47,7 +47,6 @@ public:
 	void ChooseGhostLevel(int& GhostLevel);
 	void GameRun(int& filedIndex);
 	void getStepsResFileNames(string& steps, string& res, int& fileIndex);
-	void LoadConcequence();
 	void GameRunLoadSilent();
 	int ReadStepsFromFiles(int& fileIndex);
 	void PacmanLoadCheck();
