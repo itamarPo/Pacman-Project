@@ -49,7 +49,7 @@ public:
 	void getStepsResFileNames(string& steps, string& res, int& fileIndex);
 	void LoadConcequence();
 	void GameRunLoadSilent();
-	void ReadStepsFromFiles(int& fileIndex);
+	int ReadStepsFromFiles(int& fileIndex);
 	void PacmanLoadCheck();
 	void FruitLoad(string& line);
 	void readFruitPos(string& line, int index, int fruitStatus);

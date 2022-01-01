@@ -13,8 +13,8 @@ protected:
 public:
 	void SetPosition(const int row, const int col);
 	void SetLoadDirection(const Direction& _direction);
-
-	int getMoves()const;
+	void SetNumMoves(int numMoves = 0);
+	
 	void updateMoves();
 	bool CheckWall(const int& row, const int& col, const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board);
 	virtual bool CheckTunnel(const int& row, const int& col, const int& maxRow,const int& maxCol, vector<vector<GameBoard>>& board);
@@ -22,8 +22,9 @@ public:
 	Direction SetMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board);
 	void Movement(vector<vector<GameBoard>>& board);
 	void setStartPosition(const int& row, const int& col);
-	Direction getDirection() const;
 	
+	int getMoves()const;
+	Direction getDirection() const;
 	int getStartRow() const;
 	int getStartCol() const;
 	int getRow() const;

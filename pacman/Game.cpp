@@ -265,35 +265,105 @@ void Game::GameRun(int& fileIndex)
 void Game::GameRunLoadSilent()
 {
 	int size = GameFiles.size(), i;
-	int ghostLevel = 1;
-	ofstream fileSteps, resFile;
-	for(i = 0 ; i < size ; i++)
+	int ghostLevel = 1, moves=0, tmp_pacman_move;
+	for (i = 0; i < size; i++)
 	{
 		getBoardInformation(i, ghostLevel);
-		ReadStepsFromFiles(i);
+		moves = ReadStepsFromFiles(i);
+		if (status == CmdArg::Silent)
+		{
+			if (moves != pacman.getMoves())
+			{
+				clrscr();
+				cout << "Test Failed! 1";
+				ClearLevel();
+				return;
+			}
+			else
+			{
+				clrscr();
+				cout << "Test for level: " << i << "Passed!";
+				//Sleep(200);
+			}
+			///*if(i == size - 1)
+			//{
+			//clrscr();
+			//	if(moves != pacman.getMoves())
+			//	{
+			//		
+			//		cout << "Test failed! 1";
+			//	}
+			//	else
+			//	{
+			//		cout << "Test Passed!";
+			//	}
+			//}*/
+			//else
+			//{
+			//	if (moves != pacman.getMoves())
+			//	{
+			//		clrscr();
+			//		cout << "Test failed! 2";
+			//		ClearLevel();
+			//		return;
+			//	}
+			//		
+			//}
+		}
+	
+		tmp_pacman_move = pacman.getMoves();
+		ClearLevel();
+		if (pacman.getPacmanLives() == 0)
+		{
+			clrscr();
+			if (status == CmdArg::Silent)
+			{
+				if (moves == tmp_pacman_move)
+				{
+					cout << "Test Passed!";
+				}
+				else
+					cout << "Test failed! 3";
+			}
+			return;
+		}
+		
 	}
+	
+	
 }
 
-void Game::ReadStepsFromFiles(int& fileIndex)
+int Game::ReadStepsFromFiles(int& fileIndex)
 {
 	string steps, res;
+	int numMoves;
 	getStepsResFileNames(steps, res, fileIndex);
 	ifstream stepsFile, resFile;
 	stepsFile.open(steps); resFile.open(res);
+	if (stepsFile.fail())
+	{
+		stepsFile.close();
+		resFile.close();
+		return 0;
+	}
 	string line;
+	int counter = 1;
 	clrscr();
-	PrintBoard();
+	if(status == CmdArg::Load)
+		PrintBoard();
 	getline(stepsFile, line);
 	while (!stepsFile.eof())
 	{
 		switch (line[0])
 		{
 		case 'P':
-			Sleep(500);
+			if(status == CmdArg::Load)
+				Sleep(100);
 			CheckImpact();
 			board[pacman.getRow()][pacman.getCol()].printPiece(pacman.getRow(), pacman.getCol()); // prints gameboard over old pcaman location
 			pacman.SetLoadDirection((Direction)((int)line[2]-'0'));
 			PacmanLoadCheck();
+			pacman.updateMoves();
 			CheckImpact();
 			break;
 		case 'G':
@@ -307,13 +377,20 @@ void Game::ReadStepsFromFiles(int& fileIndex)
 			break;
 		}
 		for (int i = 0; i < ghosts.size(); i++)
-			ghosts[i]->Print();
+			if (status == CmdArg::Load)
+				ghosts[i]->Print();
 		getline(stepsFile, line);
-		PrintScoreAndLives();
+		counter++;
+		if (status == CmdArg::Load)
+			PrintScoreAndLives();
 		///general check of board situation
 	}
+	resFile >> numMoves;
 	
-	
+	resFile.close();
+	stepsFile.close();
+	return numMoves;
+
 
 }
 
@@ -545,7 +622,8 @@ void Game::PrintLifeLost() const
 		cout << "The Pacman was eaten by a ghost." << endl;
 		gotoxy(11, 30);
 		cout << "You have " << pacman.getPacmanLives() << " lives reamining";
-		Sleep(GameSpeed * 8);
+		if(status != CmdArg::Silent)
+			Sleep(GameSpeed * 8);
 	}
 	clrscr();
 }
@@ -687,6 +765,7 @@ void Game::ClearLevel()
 	_numBread = 0;
 	maxRow = 0;
 	maxCol = 0;
+	pacman.SetNumMoves();
 }
 
 void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel)

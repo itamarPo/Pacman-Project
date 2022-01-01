@@ -11,6 +11,11 @@ void GameObject::SetLoadDirection(const Direction& _direction)
 	direction = _direction;
 }
 
+void GameObject::SetNumMoves(int numMoves)
+{
+	_moves = numMoves;
+}
+
 int GameObject::getMoves() const
 {
 	return _moves;
