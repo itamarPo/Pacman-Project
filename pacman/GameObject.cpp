@@ -127,23 +127,27 @@ Direction GameObject::SetMove(const int& maxRow, const int& maxCol, vector<vecto
 
 }
 
-void GameObject::Movement(vector<vector<GameBoard>>& board)
+void GameObject::Movement(vector<vector<GameBoard>>& board, bool silent)
 {
 	int row = _pos.getRow(), col = _pos.getCol();
 
 	switch (direction)
 	{
 	case Direction::Up: SetPosition(row - 1, col);
-		board[row][col].printPiece(row, col);
+		if(!silent)
+			board[row][col].printPiece(row, col);
 		break;
 	case Direction::Down: SetPosition(row + 1, col);
-		board[row][col].printPiece(row, col);
+		if (!silent)
+			board[row][col].printPiece(row, col);
 		break;
 	case Direction::Left: SetPosition(row, col - 1);
-		board[row][col].printPiece(row, col);
+		if (!silent)
+			board[row][col].printPiece(row, col);
 		break;
 	case Direction::Right: SetPosition(row, col + 1);
-		board[row][col].printPiece(row, col);
+		if (!silent)
+			board[row][col].printPiece(row, col);
 		break;
 	default:
 		break;

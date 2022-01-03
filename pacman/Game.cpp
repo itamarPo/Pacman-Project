@@ -342,7 +342,8 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 				if (pacman.getMoves() != numMoves)
 					return numMoves;
 			}
-			board[pacman.getRow()][pacman.getCol()].printPiece(pacman.getRow(), pacman.getCol()); // prints gameboard over old pcaman location
+			if(status == CmdArg::Load)
+				board[pacman.getRow()][pacman.getCol()].printPiece(pacman.getRow(), pacman.getCol()); // prints gameboard over old pcaman location
 			pacman.SetLoadDirection((Direction)((int)line[2]-'0'));
 			PacmanLoadCheck();
 			pacman.updateMoves();
@@ -355,7 +356,7 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 			break;
 		case 'G':
 			ghosts[(int)line[1]-'0']->SetLoadDirection((Direction)((int)line[3] - '0'));
-			ghosts[(int)line[1]-'0']->Movement(board);
+			ghosts[(int)line[1]-'0']->Movement(board, status == CmdArg::Silent ? true : false);
 			break;
 		case 'F': FruitLoad(line);
 			break;
@@ -384,7 +385,8 @@ void Game::PacmanLoadCheck()
 	if(!pacman.CheckTunnel(maxRow, maxCol, board))
 		pacman.setPacmanPosition();
 	CheckIfPacmanAteFood();
-	pacman.printPacman();
+	if(status != CmdArg::Silent)
+		pacman.printPacman();
 }
 
 void Game::FruitLoad(string& line)
@@ -397,12 +399,16 @@ void Game::FruitLoad(string& line)
 		fruit.SetLoadDirection((Direction)((int)line[3]-'0'));
 		fruit.setScore((int)line[line.size() - 1] - '0');
 		readFruitPos(line, 5, 0);
-		fruit.Print();
+		if(status != CmdArg::Silent)
+			fruit.Print();
 		break;
 	case '1':
 		fruit.SetLoadDirection((Direction)((int)line[3]-'0'));
-		fruit.Movement(board);
-		fruit.Print();
+		if (status != CmdArg::Silent)
+		{
+			fruit.Movement(board);
+			fruit.Print();
+		}
 		break;
 	case '2':
 		board[fruit.getRow()][fruit.getCol()].printPiece(fruit.getRow(), fruit.getCol());
