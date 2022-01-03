@@ -29,13 +29,14 @@ public:
 	~Ghost();
 
 	void SetPosition(const int row, const int col);
-	Direction GetDirection();
 
 	void Print()const;
 	virtual void UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board, Pacman& pacman);
 	Direction SmartMove(const int& maxRow, const int& maxCol,Pacman &pacman, vector<vector<GameBoard>>& board);
-	
+
+	/*
 protected:
 	int move_counter;
+	*/
 };
 

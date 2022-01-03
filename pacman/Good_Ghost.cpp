@@ -5,9 +5,9 @@ void Good_Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<
 	
 	if (!smart)
 	{
-		if (move_counter == 5)
+		if (_moves == 5)
 		{
-			move_counter = 0;
+			_moves = 0;
 			smart = true;
 			direction = SmartMove(maxRow, maxCol, pacman, board);
 		}
@@ -18,11 +18,11 @@ void Good_Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<
 	}
 	else
 	{
-		if (move_counter == randMove)
+		if (_moves == randMove)
 		{
 			randMove = RandomizeMove();
 			smart = false;
-			move_counter = 0;
+			_moves = 0;
 			direction = SetMove(maxRow, maxCol, board);
 		}
 		else
@@ -30,7 +30,7 @@ void Good_Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<
 	}
 
 	Movement(board);
-	move_counter++;
+	_moves++;
 	
 }
 

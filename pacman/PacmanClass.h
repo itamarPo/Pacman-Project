@@ -37,7 +37,6 @@ public:
 	int getPacmanScore() const;
 	int getPacmanLives() const;
 	void ResetPos();
-	Direction getPacmanDirection()const;
 	bool CheckIfPacmanHitWall(const int& maxRow, const int& maxCol, vector<vector<GameBoard>>& board);
 	virtual bool CheckTunnel(const int& maxRow,const int& maxCol, vector<vector<GameBoard>>& board);
 };

@@ -6,6 +6,7 @@ Game::Game()
 	_numBread = 0;
 	maxRow = 0;
 	maxCol = 0;
+	status = CmdArg::Simple;
 }
 
 Game::~Game()
@@ -13,7 +14,7 @@ Game::~Game()
 }
 
 
-void Game::CheckImpact()
+bool Game::CheckImpact()
 {
 	int i;
 	for (i = 0; i < ghosts.size(); i++)
@@ -26,22 +27,61 @@ void Game::CheckImpact()
 				GhostInitialize();
 				pacman.ResetPos();
 				if (pacman.getPacmanLives() == 0)
-					return;
+					return true;
 				PrintBoard();
-				return;
+				return true;
 			}
 	}
-	return;
+	return false;
 }
 
 
-void Game::Start()
+void Game::Start(int& argc, char** argv)
 {
 	bool filesFound = true;
 	getGameFiles(filesFound);
 	if (!filesFound)
 		return;
-	Menu();
+	getCommandStatus(argc, argv);
+	if(status == CmdArg::Simple || status == CmdArg::Save)
+		Menu();
+	else
+	{
+		GameRunLoadSilent();
+	}
+	
+}
+
+void Game::getCommandStatus(int& argc, char** argv)
+{
+	int i;
+	for (i = 1; i < argc; i++)
+	{
+		if (i == 1)
+		{
+			if (!strcmp(argv[i], "-save"))
+			{
+				status = CmdArg::Save;
+				return;
+			}
+			else if (strcmp(argv[i], "-load"))
+			{
+				status = CmdArg::Simple;
+				return;
+			}
+			else
+			{
+				status = CmdArg::Load;
+			}
+		}
+		if (i == 2)
+		{
+			if (!strcmp(argv[i], "[-silent]"))
+				status = CmdArg::Silent;
+		}
+	}
+
+
 }
 
 
@@ -152,11 +192,30 @@ void Game::ChooseGhostLevel(int& GhostLevel)
 	}
 }
 
-void Game::GameRun()
+
+void Game::getStepsResFileNames(string& steps, string& res, int& fileIndex) 
 {
+	steps = GameFiles[fileIndex];
+	steps.resize(steps.size() - 6);
+	res = steps;
+	steps += "steps";
+	res += "result";
+}
+
+
+void Game::GameRun(int& fileIndex)
+{
+	string stepsFile, resultFile;
+	ofstream resFile, stepFile;
+	int oldLives;
+	if (status == CmdArg::Save)
+	{
+		getStepsResFileNames(stepsFile, resultFile, fileIndex);
+		resFile.open(resultFile);
+		stepFile.open(stepsFile);
+	}
 	clrscr();
 	PrintBoard();
-	char flush;
 	char tmp_move = 0;
 	bool is_ghost_turn = false;
 	while (pacman.getPacmanLives() != 0 && _numBread != 0)
@@ -177,14 +236,210 @@ void Game::GameRun()
 					pacman.setPacmanDirection(tmp_move);
 			}
 		}
-		
-		ConsequencesOfMove(is_ghost_turn);
+		oldLives = pacman.getPacmanLives();
+		ConsequencesOfMove(is_ghost_turn, stepFile);
+		if(oldLives > pacman.getPacmanLives())
+		{
+			if (status == CmdArg::Save)
+			{
+				if(pacman.getPacmanLives()!=0)
+					resFile << pacman.getMoves() << endl;
+			}
+		}
 		if (pacman.getPacmanLives() != 0)
 			PrintScoreAndLives();
 		Sleep(GameSpeed);
 	}
+	if (status == CmdArg::Save)
+	{
+		resFile << pacman.getMoves();
+		resFile.close();
+		stepFile.close();
+	}
 	clrscr();
 	gotoxy(10, 20);
+	
+}
+
+void Game::GameRunLoadSilent()
+{
+	int size = GameFiles.size(), i;
+	int ghostLevel = 1, moves=0, tmp_pacman_move;
+	for (i = 0; i < size; i++)
+	{
+		getBoardInformation(i, ghostLevel); // 10 23 45
+		moves = ReadStepsFromFiles(i);
+		if (status == CmdArg::Silent)
+		{
+			if (moves != pacman.getMoves())
+			{
+				clrscr();
+				cout << "Test Failed!";
+				ClearLevel();
+				return;
+			}
+			else
+			{
+				clrscr();
+				cout << "Test Passed!";
+			}
+		}
+	
+		tmp_pacman_move = pacman.getMoves();
+		ClearLevel();
+		if (pacman.getPacmanLives() == 0)
+		{
+			clrscr();
+			if (status == CmdArg::Silent)
+			{
+				clrscr();
+				if (moves == tmp_pacman_move)
+				{
+					cout << "Test Passed!";
+				}
+				else
+					cout << "Test failed!";
+			}
+			else
+				cout << "End Of Record";
+			return;
+		}
+		
+	}
+	if(status == CmdArg::Load)
+		cout << "End Of Record";
+	
+}
+
+int Game::ReadStepsFromFiles(int& fileIndex)
+{
+	string steps, res;
+	int numMoves;
+	getStepsResFileNames(steps, res, fileIndex);
+	ifstream stepsFile, resFile;
+	stepsFile.open(steps); resFile.open(res);
+	if (stepsFile.fail())
+	{
+		stepsFile.close();
+		resFile.close();
+		return 0;
+	}
+	string line;
+	clrscr();
+	if(status == CmdArg::Load)
+		PrintBoard();
+	getline(stepsFile, line);
+	while (!stepsFile.eof())
+	{
+		switch (line[0])
+		{
+		case 'P':
+			if(status == CmdArg::Load)
+				Sleep(100);
+			if(CheckImpact() && status == CmdArg::Silent)
+			{
+				resFile >> numMoves;
+				if (pacman.getMoves() != numMoves)
+					return numMoves;
+			}
+			board[pacman.getRow()][pacman.getCol()].printPiece(pacman.getRow(), pacman.getCol()); // prints gameboard over old pcaman location
+			pacman.SetLoadDirection((Direction)((int)line[2]-'0'));
+			PacmanLoadCheck();
+			pacman.updateMoves();
+			if (CheckImpact() && status == CmdArg::Silent)
+			{
+				resFile >> numMoves;
+				if (pacman.getMoves() != numMoves)
+					return numMoves;
+			}
+			break;
+		case 'G':
+			ghosts[(int)line[1]-'0']->SetLoadDirection((Direction)((int)line[3] - '0'));
+			ghosts[(int)line[1]-'0']->Movement(board);
+			break;
+		case 'F': FruitLoad(line);
+			break;
+		default:
+			break;
+		}
+		for (int i = 0; i < ghosts.size(); i++)
+			if (status == CmdArg::Load)
+				ghosts[i]->Print();
+		getline(stepsFile, line);
+		if (status == CmdArg::Load)
+			PrintScoreAndLives();
+	}
+	resFile >> numMoves;
+	
+	resFile.close();
+	stepsFile.close();
+	return numMoves;
+
+
+}
+
+
+void Game::PacmanLoadCheck()
+{
+	if(!pacman.CheckTunnel(maxRow, maxCol, board))
+		pacman.setPacmanPosition();
+	CheckIfPacmanAteFood();
+	pacman.printPacman();
+}
+
+void Game::FruitLoad(string& line)
+{
+
+	switch(line[1])
+	{
+	case '0':
+		fruit.setAppear();
+		fruit.SetLoadDirection((Direction)((int)line[3]-'0'));
+		fruit.setScore((int)line[line.size() - 1] - '0');
+		readFruitPos(line, 5, 0);
+		fruit.Print();
+		break;
+	case '1':
+		fruit.SetLoadDirection((Direction)((int)line[3]-'0'));
+		fruit.Movement(board);
+		fruit.Print();
+		break;
+	case '2':
+		board[fruit.getRow()][fruit.getCol()].printPiece(fruit.getRow(), fruit.getCol());
+		fruit.setAppear();
+		readFruitPos(line, 3, 2);
+		break;
+	default:
+		break;
+	}
+}
+
+void Game::readFruitPos(string& line, int index, int fruitStatus)
+{
+	int row, col;
+	row = (int)line[index]-'0';
+	if (line[++index] != ' ')
+	{
+		row *= 10; 
+		row += (int)line[index]-'0';
+		index += 2;
+	}
+	else
+		index++;
+
+	col = (int)line[index++]-'0';
+	if(line[index] != ' ')
+	{
+		col *= 10;
+		col += (int)line[index]-'0';
+	}
+	if (fruitStatus == 0)
+		fruit.SetPosition(row, col);
+	else
+	{
+		fruit.SetPosition(0, 0);
+	}
+
 }
 
 bool Game::IsGamePaused(char& pause)
@@ -231,35 +486,42 @@ bool Game::IsMoveValid(const char& ch)
 
 /*this function checks if pacman ate, hit a ghost, or got into a tunnel*/
 
-void Game::ConsequencesOfMove(bool& is_ghost_turn)
+void Game::ConsequencesOfMove(bool& is_ghost_turn, ofstream& stepFile)
 {
 	int pacRow = pacman.getRow(), pacCol = pacman.getCol(),i; 
+	bool IsSave = false;
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
 	PacmanCheck();
+	if (status == CmdArg::Save)
+	{
+		IsSave = true;
+		stepFile << "P " << (int)pacman.getDirection() << endl;
+	}
 	CheckImpact();
+	
 
 	if (pacman.getPacmanLives() == 0)
 		return;
 	if (is_ghost_turn == true)// makes sure that ghosts move once in two p5acman moves.
 	{
-		try
-		{
-			fruit.updateStatus(maxRow, maxCol, board);
-		}
-		catch (...)
-		{
-			cout << "unkown error";
-		}
-		
+		bool fruitappear = fruit.checkAppear();
+		fruit.updateStatus(maxRow, maxCol, board,stepFile, IsSave);
 		for (i = 0; i < ghosts.size(); i++) // updates the ghost's movements (if needed it changes direction)
 			ghosts[i]->UpdateMove(maxRow, maxCol, board, pacman);
 		is_ghost_turn = false;
 		CheckGhostFruitImpact();
+		for (i = 0; i < ghosts.size(); i++)
+		{
+			ghosts[i]->Print();
+			if (IsSave)
+			{
+				stepFile << 'G' << i << ' ' << (int)ghosts[i]->getDirection() << endl;
+			}
+		}
 	}
 	else
 		is_ghost_turn = true;
-	for (i = 0; i < ghosts.size(); i++)
-		ghosts[i]->Print();
+	
 	CheckImpact();
 	CheckIfPacmanAteFood();
 }
@@ -275,6 +537,7 @@ void Game::PacmanCheck()
 		pacman.setPacmanPosition(); // set new position due to direction
 	CheckIfPacmanAteFood();
 	pacman.printPacman(); // print pacman at his new position
+	pacman.updateMoves();
 }
 
 void Game::CheckIfPacmanAteFood()
@@ -344,7 +607,8 @@ void Game::PrintLifeLost() const
 		cout << "The Pacman was eaten by a ghost." << endl;
 		gotoxy(11, 30);
 		cout << "You have " << pacman.getPacmanLives() << " lives reamining";
-		Sleep(GameSpeed * 8);
+		if(status != CmdArg::Silent)
+			Sleep(GameSpeed * 8);
 	}
 	clrscr();
 }
@@ -417,7 +681,7 @@ void Game::RegularGame(int & GhostLevel)
 	for (i = 0 ; i < size ; i++)
 	{
 		getBoardInformation(i, GhostLevel);
-		GameRun();
+		GameRun(i);
 		if (pacman.getPacmanLives() == 0)
 		{
 			EndGameMessage();
@@ -456,7 +720,7 @@ void Game::SpecificFileCycle(int & GhostLevel)
 	{
 		fileIndex = lower_bound(GameFiles.begin(), GameFiles.end(), file_name)-GameFiles.begin();
 		getBoardInformation(fileIndex, GhostLevel);
-		GameRun();
+		GameRun(fileIndex);
 		if (pacman.getPacmanLives() == 0)
 			EndGameMessage();
 		else
@@ -486,9 +750,10 @@ void Game::ClearLevel()
 	_numBread = 0;
 	maxRow = 0;
 	maxCol = 0;
+	pacman.SetNumMoves();
 }
 
-void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel)
+void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel, bool& isPacman)
 {
 	if (legend_appear)
 	{
@@ -503,16 +768,29 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 	}
 	switch (ch)
 	{
-	case Pacman_sign: pacman.setStartPosition(row, col);
-		board[row][col].setGamePiece(Space);
+	case Pacman_sign:
+		if (!isPacman)
+		{
+			pacman.setStartPosition(row, col);
+			board[row][col].setGamePiece(Space);
+			isPacman = true;
+		}
+		else
+			board[row][col].setGamePiece('%');
 		break;
 	case Ghost_sign:
-		if(GhostLevel == 1) // novice difficulty
-		ghosts.push_back(new Ghost);
-		else if(GhostLevel == 2) // interdimate difficulty
-		ghosts.push_back(new Good_Ghost); 
+		if (ghosts.size() >= 4)
+		{
+			board[row][col].setGamePiece(FOOD);
+			_numBread++;
+			break;
+		}
+		if (GhostLevel == 1) // novice difficulty
+			ghosts.push_back(new Ghost);
+		else if (GhostLevel == 2) // interdimate difficulty
+			ghosts.push_back(new Good_Ghost);
 		else // hardest difficulty
-		ghosts.push_back(new Best_Ghost);
+			ghosts.push_back(new Best_Ghost);
 		ghosts[ghosts.size() - 1]->setStartPosition(row, col);
 		board[row][col].setGamePiece(FOOD);
 		_numBread++;
@@ -561,6 +839,8 @@ void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 	ifstream File;
 	vector<GameBoard> boardLine;
 	GameBoard boardCol;
+	bool isPacman = false;
+	int row = 0, col = 0;
 	if (board.empty() && ghosts.empty())
 	{
 		board.push_back(boardLine);
@@ -581,7 +861,7 @@ void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 		if (ch != '\n')
 		{
 			board[maxRow].push_back(boardCol);
-			DecideChar(maxRow, colCounter, ch, legend_appear, GhostLevel);
+			DecideChar(maxRow, colCounter, ch, legend_appear, GhostLevel,isPacman);
 			colCounter++;
 			if (maxRow == 0)
 			{
@@ -598,6 +878,32 @@ void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 	}
 	maxRow++;
 	File.close();
+	if(ghosts.size() == 0)
+	{
+		if (GhostLevel == 1) // novice difficulty
+			ghosts.push_back(new Ghost);
+		else if (GhostLevel == 2) // interdimate difficulty
+			ghosts.push_back(new Good_Ghost);
+		else // hardest difficulty
+			ghosts.push_back(new Best_Ghost);
+		
+		do
+		{
+			row = rand() % maxRow;
+			col = rand() % maxCol;
+		} while (ghosts[0]->CheckWall(row, col, maxRow, maxCol, board) || ghosts[0]->CheckTunnel(row, col, maxRow, maxCol, board));
+		ghosts[0]->SetPosition(row, col);
+	}
+	if (!isPacman)
+	{
+		do
+		{
+			row = rand() % maxRow;
+			col = rand() % maxCol;
+		} while (pacman.CheckWall(row, col, maxRow, maxCol, board));
+		pacman.SetPosition(row, col);
+	}
+	
 }
 
 void Game::ClearGame()

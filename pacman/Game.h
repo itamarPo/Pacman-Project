@@ -6,6 +6,7 @@
 #include "PacmanClass.h"
 #include "GameObject.h"
 #include "Fruit.h"
+#include "InputParser.h"
 #include <filesystem>
 #include <string>
 #include <fstream>
@@ -23,29 +24,38 @@ const int SizeToCheck = 6;
 class Game
 {
 private: 
+	enum class CmdArg { Simple, Load, Save, Silent };
 	vector<vector<GameBoard>> board;
 	Pacman pacman;
 	vector<Ghost*> ghosts;
 	Position _legend;
 	vector<string> GameFiles;
 	Fruit fruit;
+	CmdArg status;
 	int _numBread;
 	int maxRow;
 	int maxCol;
 public:
 	Game();
 	~Game();
-	void CheckImpact();
-	void Start();
+	bool CheckImpact();
+	void Start(int& argc, char** argv);
+	void getCommandStatus(int& argc, char** argv);
 	void PrintBoard() const;
 	void Menu();
 	void PrintMenu() const;
 	void Instructions(char& user_input);
 	void ChooseGhostLevel(int& GhostLevel);
-	void GameRun();
+	void GameRun(int& filedIndex);
+	void getStepsResFileNames(string& steps, string& res, int& fileIndex);
+	void GameRunLoadSilent();
+	int ReadStepsFromFiles(int& fileIndex);
+	void PacmanLoadCheck();
+	void FruitLoad(string& line);
+	void readFruitPos(string& line, int index, int fruitStatus);
 	bool IsGamePaused(char &pause);
 	bool IsMoveValid(const char& ch);
-	void ConsequencesOfMove(bool& is_ghost_turn);
+	void ConsequencesOfMove(bool& is_ghost_turn, ofstream& stepFile);
 	void PacmanCheck();
 	void CheckIfPacmanAteFood();
 	void PrintScoreAndLives()const;
@@ -60,7 +70,7 @@ public:
 	void RegularGame(int & GhostLevel);
 	void SpecificFileCycle(int & GhostLevel);
 	void ClearLevel();
-	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel);
+	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel, bool& isPacman);
 	void EndGameMessage() const;
 	void WinGameMessage() const;
 	void WaitMessage()const;
