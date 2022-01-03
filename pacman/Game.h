@@ -19,11 +19,12 @@ using std::filesystem::directory_iterator;
 const char filenamestart[] = "pacman_";
 const char filenamefinish[] = ".screen";
 const int SizeToCheck = 6;
-enum class CmdArg {Simple, Load, Save, Silent};
+
 
 class Game
 {
 private: 
+	enum class CmdArg { Simple, Load, Save, Silent };
 	vector<vector<GameBoard>> board;
 	Pacman pacman;
 	vector<Ghost*> ghosts;
@@ -37,7 +38,7 @@ private:
 public:
 	Game();
 	~Game();
-	void CheckImpact();
+	bool CheckImpact();
 	void Start(int& argc, char** argv);
 	void getCommandStatus(int& argc, char** argv);
 	void PrintBoard() const;
@@ -69,7 +70,7 @@ public:
 	void RegularGame(int & GhostLevel);
 	void SpecificFileCycle(int & GhostLevel);
 	void ClearLevel();
-	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel);
+	void DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel, bool& isPacman);
 	void EndGameMessage() const;
 	void WinGameMessage() const;
 	void WaitMessage()const;

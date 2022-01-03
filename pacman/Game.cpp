@@ -14,7 +14,7 @@ Game::~Game()
 }
 
 
-void Game::CheckImpact()
+bool Game::CheckImpact()
 {
 	int i;
 	for (i = 0; i < ghosts.size(); i++)
@@ -27,12 +27,12 @@ void Game::CheckImpact()
 				GhostInitialize();
 				pacman.ResetPos();
 				if (pacman.getPacmanLives() == 0)
-					return;
+					return true;
 				PrintBoard();
-				return;
+				return true;
 			}
 	}
-	return;
+	return false;
 }
 
 
@@ -207,6 +207,7 @@ void Game::GameRun(int& fileIndex)
 {
 	string stepsFile, resultFile;
 	ofstream resFile, stepFile;
+	int oldLives;
 	if (status == CmdArg::Save)
 	{
 		getStepsResFileNames(stepsFile, resultFile, fileIndex);
@@ -235,8 +236,16 @@ void Game::GameRun(int& fileIndex)
 					pacman.setPacmanDirection(tmp_move);
 			}
 		}
-		
+		oldLives = pacman.getPacmanLives();
 		ConsequencesOfMove(is_ghost_turn, stepFile);
+		if(oldLives > pacman.getPacmanLives())
+		{
+			if (status == CmdArg::Save)
+			{
+				if(pacman.getPacmanLives()!=0)
+					resFile << pacman.getMoves() << endl;
+			}
+		}
 		if (pacman.getPacmanLives() != 0)
 			PrintScoreAndLives();
 		Sleep(GameSpeed);
@@ -258,7 +267,7 @@ void Game::GameRunLoadSilent()
 	int ghostLevel = 1, moves=0, tmp_pacman_move;
 	for (i = 0; i < size; i++)
 	{
-		getBoardInformation(i, ghostLevel);
+		getBoardInformation(i, ghostLevel); // 10 23 45
 		moves = ReadStepsFromFiles(i);
 		if (status == CmdArg::Silent)
 		{
@@ -316,7 +325,6 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 		return 0;
 	}
 	string line;
-	int counter = 1;
 	clrscr();
 	if(status == CmdArg::Load)
 		PrintBoard();
@@ -328,12 +336,22 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 		case 'P':
 			if(status == CmdArg::Load)
 				Sleep(100);
-			CheckImpact();
+			if(CheckImpact() && status == CmdArg::Silent)
+			{
+				resFile >> numMoves;
+				if (pacman.getMoves() != numMoves)
+					return numMoves;
+			}
 			board[pacman.getRow()][pacman.getCol()].printPiece(pacman.getRow(), pacman.getCol()); // prints gameboard over old pcaman location
 			pacman.SetLoadDirection((Direction)((int)line[2]-'0'));
 			PacmanLoadCheck();
 			pacman.updateMoves();
-			CheckImpact();
+			if (CheckImpact() && status == CmdArg::Silent)
+			{
+				resFile >> numMoves;
+				if (pacman.getMoves() != numMoves)
+					return numMoves;
+			}
 			break;
 		case 'G':
 			ghosts[(int)line[1]-'0']->SetLoadDirection((Direction)((int)line[3] - '0'));
@@ -348,7 +366,6 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 			if (status == CmdArg::Load)
 				ghosts[i]->Print();
 		getline(stepsFile, line);
-		counter++;
 		if (status == CmdArg::Load)
 			PrintScoreAndLives();
 	}
@@ -360,6 +377,7 @@ int Game::ReadStepsFromFiles(int& fileIndex)
 
 
 }
+
 
 void Game::PacmanLoadCheck()
 {
@@ -474,12 +492,13 @@ void Game::ConsequencesOfMove(bool& is_ghost_turn, ofstream& stepFile)
 	bool IsSave = false;
 	board[pacRow][pacCol].printPiece(pacRow, pacCol);
 	PacmanCheck();
-	if(status == CmdArg::Save)
+	if (status == CmdArg::Save)
 	{
 		IsSave = true;
 		stepFile << "P " << (int)pacman.getDirection() << endl;
 	}
 	CheckImpact();
+	
 
 	if (pacman.getPacmanLives() == 0)
 		return;
@@ -734,7 +753,7 @@ void Game::ClearLevel()
 	pacman.SetNumMoves();
 }
 
-void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel)
+void Game::DecideChar(const int& row, const int& col, const char& ch, bool& legend_appear, int & GhostLevel, bool& isPacman)
 {
 	if (legend_appear)
 	{
@@ -749,16 +768,29 @@ void Game::DecideChar(const int& row, const int& col, const char& ch, bool& lege
 	}
 	switch (ch)
 	{
-	case Pacman_sign: pacman.setStartPosition(row, col);
-		board[row][col].setGamePiece(Space);
+	case Pacman_sign:
+		if (!isPacman)
+		{
+			pacman.setStartPosition(row, col);
+			board[row][col].setGamePiece(Space);
+			isPacman = true;
+		}
+		else
+			board[row][col].setGamePiece('%');
 		break;
 	case Ghost_sign:
-		if(GhostLevel == 1) // novice difficulty
-		ghosts.push_back(new Ghost);
-		else if(GhostLevel == 2) // interdimate difficulty
-		ghosts.push_back(new Good_Ghost); 
+		if (ghosts.size() >= 4)
+		{
+			board[row][col].setGamePiece(FOOD);
+			_numBread++;
+			break;
+		}
+		if (GhostLevel == 1) // novice difficulty
+			ghosts.push_back(new Ghost);
+		else if (GhostLevel == 2) // interdimate difficulty
+			ghosts.push_back(new Good_Ghost);
 		else // hardest difficulty
-		ghosts.push_back(new Best_Ghost);
+			ghosts.push_back(new Best_Ghost);
 		ghosts[ghosts.size() - 1]->setStartPosition(row, col);
 		board[row][col].setGamePiece(FOOD);
 		_numBread++;
@@ -807,6 +839,8 @@ void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 	ifstream File;
 	vector<GameBoard> boardLine;
 	GameBoard boardCol;
+	bool isPacman = false;
+	int row = 0, col = 0;
 	if (board.empty() && ghosts.empty())
 	{
 		board.push_back(boardLine);
@@ -827,7 +861,7 @@ void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 		if (ch != '\n')
 		{
 			board[maxRow].push_back(boardCol);
-			DecideChar(maxRow, colCounter, ch, legend_appear, GhostLevel);
+			DecideChar(maxRow, colCounter, ch, legend_appear, GhostLevel,isPacman);
 			colCounter++;
 			if (maxRow == 0)
 			{
@@ -844,6 +878,32 @@ void Game::getBoardInformation(int fileIndex, int& GhostLevel)
 	}
 	maxRow++;
 	File.close();
+	if(ghosts.size() == 0)
+	{
+		if (GhostLevel == 1) // novice difficulty
+			ghosts.push_back(new Ghost);
+		else if (GhostLevel == 2) // interdimate difficulty
+			ghosts.push_back(new Good_Ghost);
+		else // hardest difficulty
+			ghosts.push_back(new Best_Ghost);
+		
+		do
+		{
+			row = rand() % maxRow;
+			col = rand() % maxCol;
+		} while (ghosts[0]->CheckWall(row, col, maxRow, maxCol, board) || ghosts[0]->CheckTunnel(row, col, maxRow, maxCol, board));
+		ghosts[0]->SetPosition(row, col);
+	}
+	if (!isPacman)
+	{
+		do
+		{
+			row = rand() % maxRow;
+			col = rand() % maxCol;
+		} while (pacman.CheckWall(row, col, maxRow, maxCol, board));
+		pacman.SetPosition(row, col);
+	}
+	
 }
 
 void Game::ClearGame()
