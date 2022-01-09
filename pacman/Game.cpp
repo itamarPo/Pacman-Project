@@ -38,13 +38,17 @@ bool Game::CheckImpact()
 
 void Game::Start(int& argc, char** argv)
 {
+	
 	bool filesFound = true;
 	getGameFiles(filesFound);
 	if (!filesFound)
 		return;
 	getCommandStatus(argc, argv);
-	if(status == CmdArg::Simple || status == CmdArg::Save)
+	if (status == CmdArg::Simple || status == CmdArg::Save)
+	{
+		srand(time(0));
 		Menu();
+	}
 	else
 	{
 		GameRunLoadSilent();
@@ -567,10 +571,11 @@ void Game::CheckIfPacmanAteFood()
 
 void Game::PrintScoreAndLives() const
 {
-	int i,j;
+	int i, j; 
+	const int legend_maxRow = 3;
 	gotoxy(_legend.getRow(), _legend.getCol());
 	string score = "Your score: ";
-	string legend[3];
+	string legend[legend_maxRow];
 	for (i = 0; i < 3; i++)
 	{
 		switch (i)

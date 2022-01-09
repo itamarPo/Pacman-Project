@@ -6,7 +6,6 @@
 #include "PacmanClass.h"
 #include "GameObject.h"
 #include "Fruit.h"
-#include "InputParser.h"
 #include <filesystem>
 #include <string>
 #include <fstream>

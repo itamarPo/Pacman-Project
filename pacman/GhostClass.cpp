@@ -50,8 +50,8 @@ void Ghost::UpdateMove(const int& maxRow, const int& maxCol, vector<vector<GameB
 Direction Ghost::SmartMove(const int& maxRow, const int& maxCol, Pacman& pacman, vector<vector<GameBoard>>& board)
 {
 	//BFS
-	
-	bool visited[25][80];
+	const int maximumRow = 25, maximumCol = 80;
+	bool visited[maximumRow][maximumCol];
 	Qitem ghost(_pos.getRow(), _pos.getCol(), Direction::Stay);
 	int i, j;
 	for (i = 0 ; i < maxRow ; i++)
